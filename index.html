@@ -293,10 +293,10 @@
           </div>
           <div class="col">
             <label>Distance rule</label>
-            <select id="distanceRule">
-              <option value="L1">Absolute distance: |Δw| + |Δl| (recommended)</option>
-              <option value="L2">Euclidean: sqrt(Δw² + Δl²)</option>
-            </select>
+                  <select id="distanceRule">
+                    <option value="L1">Absolute distance: abs(dw) + abs(dl) (recommended)</option>
+                    <option value="L2">Euclidean distance: sqrt(dw*dw + dl*dl)</option>
+                  </select>
             <div class="small muted" style="margin-top:6px;">Tie-break: smallest area → smallest width → smallest length.</div>
           </div>
         </div>
@@ -684,4 +684,5 @@
 
 </body>
 </html>
+
 
