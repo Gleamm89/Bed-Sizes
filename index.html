@@ -3,98 +3,291 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>EU Bed Size Mapper (CSV)</title>
+  <title>vidaXL | EU Bed Size Mapper</title>
   <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 24px; }
-    h1 { margin: 0 0 8px; }
-    .muted { color: #555; }
-    .card { border: 1px solid #ddd; border-radius: 12px; padding: 16px; margin: 16px 0; }
-    label { font-weight: 600; display: block; margin: 10px 0 6px; }
-    input[type="text"], select { padding: 8px 10px; border: 1px solid #ccc; border-radius: 10px; width: 100%; max-width: 520px; }
-    input[type="file"] { margin: 8px 0; }
-    button { padding: 10px 14px; border: 1px solid #ccc; border-radius: 10px; background: #fff; cursor: pointer; }
-    button:hover { background: #f6f6f6; }
-    .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; }
-    .col { flex: 1; min-width: 240px; }
-    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
-    th, td { border: 1px solid #ddd; padding: 8px; font-size: 14px; }
-    th { background: #fafafa; text-align: left; }
-    .pill { display: inline-block; padding: 2px 8px; border: 1px solid #ddd; border-radius: 999px; font-size: 12px; }
-    .ok { border-color: #b7e3b7; background: #f0fff0; }
-    .warn { border-color: #ffd6a6; background: #fff7ed; }
-    .error { border-color: #ffb4b4; background: #fff1f1; }
-    .small { font-size: 12px; }
-    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    :root{
+      --vx-orange:#f60;
+      --vx-orange-2:#ff7a1a;
+      --vx-black:#111;
+      --vx-text:#1f2937;
+      --vx-muted:#6b7280;
+      --vx-border:#e5e7eb;
+      --vx-bg:#f6f7fb;
+      --vx-card:#ffffff;
+      --vx-shadow: 0 10px 30px rgba(0,0,0,.08);
+      --vx-radius: 16px;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--vx-text);
+      background: radial-gradient(1200px 600px at 20% 0%, rgba(255,102,0,.10), transparent 55%),
+                  radial-gradient(900px 500px at 80% 20%, rgba(255,122,26,.08), transparent 60%),
+                  var(--vx-bg);
+    }
+
+    .wrap{ max-width: 1100px; margin: 28px auto; padding: 0 18px 40px; }
+
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between; gap:16px;
+      padding: 14px 18px;
+      border: 1px solid rgba(255,102,0,.18);
+      background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.80));
+      backdrop-filter: blur(6px);
+      border-radius: 18px;
+      box-shadow: 0 8px 20px rgba(0,0,0,.06);
+    }
+    .brand{ display:flex; align-items:center; gap:12px; }
+    .logo{
+      width: 42px; height: 42px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--vx-orange), var(--vx-orange-2));
+      display:grid; place-items:center;
+      box-shadow: 0 10px 20px rgba(255,102,0,.22);
+      color:white; font-weight: 800;
+      letter-spacing: .5px;
+      user-select:none;
+    }
+    h1{ font-size: 18px; margin:0; color: var(--vx-black); }
+    .subtitle{ font-size: 13px; color: var(--vx-muted); margin-top:2px; }
+
+    .badge{
+      font-size:12px; padding: 6px 10px; border-radius: 999px;
+      border: 1px solid var(--vx-border);
+      background: rgba(255,255,255,.9);
+      color: var(--vx-muted);
+      display:inline-flex; align-items:center; gap:8px;
+      white-space:nowrap;
+    }
+    .dot{ width:8px; height:8px; border-radius: 50%; background: #d1d5db; }
+    .dot.ok{ background: #22c55e; }
+    .dot.warn{ background: #f59e0b; }
+    .dot.err{ background: #ef4444; }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      border: 1px solid var(--vx-border);
+      background: var(--vx-card);
+      border-radius: var(--vx-radius);
+      box-shadow: var(--vx-shadow);
+      padding: 16px;
+    }
+    .card h2{
+      margin: 0 0 8px;
+      font-size: 14px;
+      color: var(--vx-black);
+    }
+    .muted{ color: var(--vx-muted); font-size: 13px; }
+
+    label{
+      display:block;
+      font-size: 12px;
+      font-weight: 650;
+      color: var(--vx-black);
+      margin: 12px 0 6px;
+    }
+
+    input[type="text"], select{
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--vx-border);
+      border-radius: 12px;
+      background: #fff;
+      outline:none;
+      transition: box-shadow .15s ease, border-color .15s ease;
+    }
+    input[type="text"]:focus, select:focus{
+      border-color: rgba(255,102,0,.55);
+      box-shadow: 0 0 0 4px rgba(255,102,0,.12);
+    }
+
+    input[type="file"]{
+      width:100%;
+      padding: 10px 12px;
+      border: 1px dashed rgba(255,102,0,.35);
+      border-radius: 12px;
+      background: rgba(255,102,0,.03);
+    }
+
+    .row{ display:flex; gap: 12px; flex-wrap:wrap; }
+    .col{ flex:1; min-width: 220px; }
+
+    .actions{
+      display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+      margin-top: 14px;
+    }
+
+    button{
+      border: 1px solid var(--vx-border);
+      background: #fff;
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight: 650;
+      transition: transform .05s ease, background .15s ease, box-shadow .15s ease, border-color .15s ease;
+    }
+    button:hover{ background:#fafafa; }
+    button:active{ transform: translateY(1px); }
+
+    .primary{
+      background: linear-gradient(135deg, var(--vx-orange), var(--vx-orange-2));
+      border-color: rgba(255,102,0,.45);
+      color: white;
+      box-shadow: 0 12px 24px rgba(255,102,0,.18);
+    }
+    .primary:hover{ filter: brightness(0.98); background: linear-gradient(135deg, var(--vx-orange), var(--vx-orange-2)); }
+    button:disabled{
+      opacity:.55; cursor:not-allowed; box-shadow:none;
+    }
+
+    .small{ font-size: 12px; }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+
+    table{
+      width:100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      overflow:hidden;
+      border-radius: 14px;
+      border:1px solid var(--vx-border);
+    }
+    th, td{
+      border-bottom: 1px solid var(--vx-border);
+      padding: 10px 10px;
+      font-size: 13px;
+      vertical-align: top;
+    }
+    th{
+      text-align:left;
+      font-size: 12px;
+      color: var(--vx-muted);
+      background: #fbfbfd;
+    }
+    tr:last-child td{ border-bottom: none; }
+
+    .sizesbox{
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255,102,0,.04);
+      border: 1px solid rgba(255,102,0,.18);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .footer-note{
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--vx-muted);
+    }
+    .kv{
+      display:flex; justify-content:space-between; gap:10px;
+      padding: 8px 0; border-bottom: 1px dashed var(--vx-border);
+      font-size: 13px;
+    }
+    .kv:last-child{ border-bottom:none; }
+    .kv b{ color: var(--vx-black); }
   </style>
 </head>
-<body>
-  <h1>EU Bed Size Mapper</h1>
-  <div class="muted">Upload a CSV with item numbers + dimensions (cm). The app proposes the nearest standard EU bed size. Ties → smallest option.</div>
 
-  <div class="card">
-    <div class="row">
-      <div class="col">
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo">VX</div>
+        <div>
+          <h1>EU Bed Size Mapper</h1>
+          <div class="subtitle">Upload CSV → map dimensions to nearest standard EU bed sizes (ties → smallest).</div>
+        </div>
+      </div>
+      <div class="badge" id="statusBadge">
+        <span class="dot" id="statusDot"></span>
+        <span id="statusText">Waiting for file…</span>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Import & mapping</h2>
+        <div class="muted">Works locally in your browser — your CSV isn’t uploaded anywhere.</div>
+
         <label>CSV file</label>
         <input id="fileInput" type="file" accept=".csv,text/csv" />
-        <div id="fileInfo" class="small muted"></div>
+        <div id="fileInfo" class="small muted" style="margin-top:6px;"></div>
+
+        <div class="row" style="margin-top: 8px;">
+          <div class="col">
+            <label>Delimiter</label>
+            <select id="delimiter">
+              <option value="auto">Auto-detect</option>
+              <option value=",">Comma (,)</option>
+              <option value=";">Semicolon (;)</option>
+              <option value="\t">Tab</option>
+            </select>
+          </div>
+          <div class="col">
+            <label>Distance rule</label>
+            <select id="distanceRule">
+              <option value="L1">Absolute distance: |Δw| + |Δl| (recommended)</option>
+              <option value="L2">Euclidean: sqrt(Δw² + Δl²)</option>
+            </select>
+            <div class="footer-note">Tie-break: smallest area → smallest width → smallest length.</div>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top: 8px;">
+          <div class="col">
+            <label>Item number column (header)</label>
+            <input id="itemCol" type="text" placeholder="e.g., item_number, sku, itemno" />
+          </div>
+          <div class="col">
+            <label>Width column (header)</label>
+            <input id="wCol" type="text" placeholder="e.g., width, w, mattress_width" />
+          </div>
+          <div class="col">
+            <label>Length column (header)</label>
+            <input id="lCol" type="text" placeholder="e.g., length, l, mattress_length" />
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="primary" id="processBtn">Process CSV</button>
+          <button id="downloadBtn" disabled>Download enriched CSV</button>
+          <span class="muted small" id="hint">Tip: name the main HTML file <b>index.html</b> for GitHub Pages.</span>
+        </div>
       </div>
-      <div class="col">
-        <label>Delimiter</label>
-        <select id="delimiter">
-          <option value="auto">Auto-detect</option>
-          <option value=",">Comma (,)</option>
-          <option value=";">Semicolon (;)</option>
-          <option value="\t">Tab</option>
-        </select>
+
+      <div class="card">
+        <h2>Standard sizes</h2>
+        <div class="muted">Edit these in the code if you need extra variants (e.g. 190-length beds).</div>
+        <div class="sizesbox mono" id="sizesList"></div>
+        <div style="margin-top: 12px;">
+          <div class="kv"><span>Output columns added</span><b>3</b></div>
+          <div class="kv"><span>Added: size</span><b>proposed_standard_size</b></div>
+          <div class="kv"><span>Added: label</span><b>proposed_standard_name</b></div>
+          <div class="kv"><span>Added: distance</span><b>distance</b></div>
+        </div>
       </div>
     </div>
 
-    <div class="row" style="margin-top: 12px;">
-      <div class="col">
-        <label>Item number column (header)</label>
-        <input id="itemCol" type="text" placeholder="e.g., item_number, sku, itemno" />
-      </div>
-      <div class="col">
-        <label>Width column (header)</label>
-        <input id="wCol" type="text" placeholder="e.g., width, w, mattress_width" />
-      </div>
-      <div class="col">
-        <label>Length column (header)</label>
-        <input id="lCol" type="text" placeholder="e.g., length, l, mattress_length" />
-      </div>
+    <div class="card" style="margin-top: 18px;">
+      <h2>Preview</h2>
+      <div class="muted">First 200 rows of the enriched output.</div>
+      <div id="previewWrap"></div>
     </div>
-
-    <div class="row" style="margin-top: 12px;">
-      <div class="col">
-        <label>Distance rule</label>
-        <select id="distanceRule">
-          <option value="L1">Absolute distance: |Δw| + |Δl| (recommended)</option>
-          <option value="L2">Euclidean: sqrt(Δw² + Δl²)</option>
-        </select>
-        <div class="small muted">Tie-break: smallest area → smallest width → smallest length.</div>
-      </div>
-
-      <div class="col">
-        <label>Standard EU sizes used</label>
-        <div class="small mono" id="sizesList"></div>
-      </div>
-    </div>
-
-    <div class="row" style="margin-top: 14px;">
-      <button id="processBtn">Process CSV</button>
-      <button id="downloadBtn" disabled>Download enriched CSV</button>
-      <span id="status" class="pill muted">Waiting for file…</span>
-    </div>
-  </div>
-
-  <div class="card">
-    <div><strong>Preview</strong> <span class="muted small">(first 200 rows)</span></div>
-    <div id="previewWrap"></div>
   </div>
 
 <script>
   // ---- Standard EU bed sizes (cm) ----
-  // You can add/remove sizes as needed.
   const STANDARD_SIZES = [
     { name: "Single", w: 80,  l: 200 },
     { name: "Single", w: 90,  l: 200 },
@@ -105,13 +298,11 @@
     { name: "Extra Large", w: 200, l: 200 },
   ];
 
+  // UI refs
   const sizesListEl = document.getElementById("sizesList");
-  sizesListEl.textContent = STANDARD_SIZES.map(s => `${s.w}x${s.l}(${s.name})`).join(", ");
-
   const fileInput = document.getElementById("fileInput");
   const processBtn = document.getElementById("processBtn");
   const downloadBtn = document.getElementById("downloadBtn");
-  const statusEl = document.getElementById("status");
   const previewWrap = document.getElementById("previewWrap");
   const fileInfo = document.getElementById("fileInfo");
 
@@ -121,16 +312,23 @@
   const delimiterEl = document.getElementById("delimiter");
   const distanceRuleEl = document.getElementById("distanceRule");
 
+  const statusDot = document.getElementById("statusDot");
+  const statusText = document.getElementById("statusText");
+
   let enrichedRows = [];
   let enrichedHeader = [];
 
+  sizesListEl.textContent = STANDARD_SIZES.map(s => `${s.w}x${s.l} (${s.name})`).join("  •  ");
+
   function setStatus(text, kind="muted") {
-    statusEl.className = "pill " + (kind || "muted");
-    statusEl.textContent = text;
+    statusText.textContent = text;
+    statusDot.className = "dot";
+    if (kind === "ok") statusDot.classList.add("ok");
+    if (kind === "warn") statusDot.classList.add("warn");
+    if (kind === "err") statusDot.classList.add("err");
   }
 
   function detectDelimiter(text) {
-    // simple heuristic: compare counts in first non-empty line
     const lines = text.split(/\r?\n/).filter(l => l.trim().length);
     const sample = lines.slice(0, 5).join("\n");
     const candidates = [",", ";", "\t"];
@@ -146,7 +344,7 @@
     return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   }
 
-  // Basic CSV parsing supporting quoted fields.
+  // Basic CSV parser (supports quoted fields)
   function parseCSV(text, delimiter) {
     const rows = [];
     let row = [];
@@ -158,17 +356,12 @@
       const next = text[i + 1];
 
       if (c === '"') {
-        if (inQuotes && next === '"') { // escaped quote
-          field += '"';
-          i++;
-        } else {
-          inQuotes = !inQuotes;
-        }
+        if (inQuotes && next === '"') { field += '"'; i++; }
+        else { inQuotes = !inQuotes; }
       } else if (!inQuotes && c === delimiter) {
-        row.push(field);
-        field = "";
+        row.push(field); field = "";
       } else if (!inQuotes && (c === "\n" || c === "\r")) {
-        if (c === "\r" && next === "\n") i++; // CRLF
+        if (c === "\r" && next === "\n") i++;
         row.push(field);
         rows.push(row);
         row = [];
@@ -177,13 +370,10 @@
         field += c;
       }
     }
-    // last field
     if (field.length || row.length) {
       row.push(field);
       rows.push(row);
     }
-
-    // Remove trailing empty rows
     while (rows.length && rows[rows.length - 1].every(v => (v ?? "").trim() === "")) rows.pop();
     return rows;
   }
@@ -209,16 +399,13 @@
 
   function toNumber(x) {
     if (x == null) return NaN;
-    // handle "83x200" or "83 x 200" inside a single cell
     const s = String(x).trim();
-    // if number with comma decimal
     const num = Number(s.replace(",", "."));
     return Number.isFinite(num) ? num : NaN;
   }
 
   function extractDimsFromCell(cell) {
     const s = String(cell ?? "").trim().toLowerCase();
-    // match like "83x200", "83 x 200", "83*200", "83×200"
     const m = s.match(/(\d+(?:[.,]\d+)?)\s*(?:x|×|\*|by)\s*(\d+(?:[.,]\d+)?)/i);
     if (!m) return null;
     const w = Number(m[1].replace(",", "."));
@@ -235,7 +422,6 @@
   }
 
   function pickNearestSize(w, l, rule) {
-    // ensure w is the smaller dimension (beds are typically WxL, W <= L)
     let ww = w, ll = l;
     if (ww > ll) [ww, ll] = [ll, ww];
 
@@ -244,35 +430,20 @@
     for (const s of STANDARD_SIZES) {
       const d = distance(ww, ll, s.w, s.l, rule);
       const area = s.w * s.l;
-      if (!best) {
-        best = { ...s, d, area };
-        continue;
-      }
 
-      // Primary: min distance
-      if (d < best.d) {
-        best = { ...s, d, area };
-        continue;
-      }
+      if (!best) { best = { ...s, d, area }; continue; }
+
+      if (d < best.d) { best = { ...s, d, area }; continue; }
       if (d > best.d) continue;
 
-      // Tie: choose smallest option (area → width → length)
-      if (area < best.area) {
-        best = { ...s, d, area };
-        continue;
-      }
+      // Tie: smallest option (area → width → length)
+      if (area < best.area) { best = { ...s, d, area }; continue; }
       if (area > best.area) continue;
 
-      if (s.w < best.w) {
-        best = { ...s, d, area };
-        continue;
-      }
+      if (s.w < best.w) { best = { ...s, d, area }; continue; }
       if (s.w > best.w) continue;
 
-      if (s.l < best.l) {
-        best = { ...s, d, area };
-        continue;
-      }
+      if (s.l < best.l) { best = { ...s, d, area }; continue; }
     }
 
     return best;
@@ -292,6 +463,7 @@
   function renderPreview(header, rows) {
     const max = Math.min(rows.length, 200);
     const table = document.createElement("table");
+
     const thead = document.createElement("thead");
     const trh = document.createElement("tr");
     header.forEach(h => {
@@ -323,21 +495,20 @@
     enrichedHeader = [];
     downloadBtn.disabled = true;
     previewWrap.innerHTML = "";
+
     if (!fileInput.files?.length) {
       fileInfo.textContent = "";
       setStatus("Waiting for file…", "muted");
       return;
     }
+
     const f = fileInput.files[0];
     fileInfo.textContent = `${f.name} (${Math.round(f.size/1024)} KB)`;
     setStatus("Ready to process", "ok");
   });
 
   processBtn.addEventListener("click", async () => {
-    if (!fileInput.files?.length) {
-      setStatus("Please choose a CSV file first", "warn");
-      return;
-    }
+    if (!fileInput.files?.length) { setStatus("Please choose a CSV file first", "warn"); return; }
 
     const f = fileInput.files[0];
     const text = await f.text();
@@ -347,45 +518,37 @@
     if (delimiter === "\\t") delimiter = "\t";
 
     let rows = parseCSV(text, delimiter);
-    if (!rows.length) {
-      setStatus("CSV appears empty", "error");
-      return;
-    }
+    if (!rows.length) { setStatus("CSV appears empty", "err"); return; }
 
-    // Header row
     const header = rows[0].map(h => String(h ?? "").trim());
     const data = rows.slice(1);
 
-    // Determine indices (from user input or guesses)
-    let itemIdx = findColumnIndex(header, itemColEl.value) ;
+    let itemIdx = findColumnIndex(header, itemColEl.value);
     let wIdx = findColumnIndex(header, wColEl.value);
     let lIdx = findColumnIndex(header, lColEl.value);
 
-    // guesses if user didn't specify
     if (itemIdx === -1) itemIdx = guessColumn(header, ["item_number","itemno","sku","article","articlenumber","item","product_id","id"]);
     if (wIdx === -1) wIdx = guessColumn(header, ["width","w","mat_width","mattress_width","bed_width","size_w"]);
     if (lIdx === -1) lIdx = guessColumn(header, ["length","l","mat_length","mattress_length","bed_length","size_l"]);
 
-    // if width/length not found, try a single "dimensions" style column
     let dimIdx = -1;
     if (wIdx === -1 || lIdx === -1) {
       dimIdx = guessColumn(header, ["dimensions","dimension","size","mattress_size","bed_size"]);
     }
 
-    if (itemIdx === -1) itemIdx = 0; // fallback to first column
+    if (itemIdx === -1) itemIdx = 0;
 
     const rule = distanceRuleEl.value;
 
-    const outHeader = [...header, "proposed_standard_size", "proposed_standard_name", "distance", "normalized_input_w", "normalized_input_l"];
+    // Output columns (REMOVED the last 2 columns you mentioned)
+    const outHeader = [...header, "proposed_standard_size", "proposed_standard_name", "distance"];
     const outRows = [];
 
     let okCount = 0, badCount = 0;
 
     for (const r of data) {
       const row = [...r];
-      const rawItem = r[itemIdx] ?? "";
 
-      // read dims
       let w = Number.NaN, l = Number.NaN;
 
       if (wIdx !== -1 && lIdx !== -1) {
@@ -395,7 +558,6 @@
         const d = extractDimsFromCell(r[dimIdx]);
         if (d) { w = d.w; l = d.l; }
       } else {
-        // last resort: scan all cells for something like "83x200"
         for (const cell of r) {
           const d = extractDimsFromCell(cell);
           if (d) { w = d.w; l = d.l; break; }
@@ -404,11 +566,10 @@
 
       if (!Number.isFinite(w) || !Number.isFinite(l)) {
         badCount++;
-        outRows.push([...row, "", "", "", "", ""]);
+        outRows.push([...row, "", "", ""]);
         continue;
       }
 
-      // normalize orientation
       let ww = w, ll = l;
       if (ww > ll) [ww, ll] = [ll, ww];
 
@@ -420,8 +581,6 @@
         `${best.w}x${best.l}`,
         best.name,
         String(best.d),
-        String(ww),
-        String(ll),
       ]);
     }
 
@@ -431,13 +590,13 @@
     renderPreview(enrichedHeader, enrichedRows);
 
     downloadBtn.disabled = false;
-    setStatus(`Done: ${okCount} mapped, ${badCount} missing dims`, badCount ? "warn" : "ok");
+    if (badCount) setStatus(`Done: ${okCount} mapped, ${badCount} missing dims`, "warn");
+    else setStatus(`Done: ${okCount} mapped`, "ok");
   });
 
   downloadBtn.addEventListener("click", () => {
     if (!enrichedHeader.length) return;
-    const delimiter = ","; // output as comma CSV
-    const csv = toCSV([enrichedHeader, ...enrichedRows], delimiter);
+    const csv = toCSV([enrichedHeader, ...enrichedRows], ",");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob);
 
@@ -450,6 +609,8 @@
 
     URL.revokeObjectURL(url);
   });
+
+  setStatus("Waiting for file…", "muted");
 </script>
 </body>
 </html>
