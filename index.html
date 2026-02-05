@@ -1,22 +1,26 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>GJ | EU Bed Size Mapper</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>vidaXL | EU Bed Size Mapper</title>
 
 <!-- Put your logo image in repo root as logo.png -->
-<link rel="icon" type="image/png" href="logo.png">
+<link rel="icon" type="image/png" href="logo.png" />
 
 <style>
 :root{
-  --vx-bg:#D3b7da;
+  /* 1) Background color updated */
+  --vx-bg:#D3B7DA;
+
   --vx-green:#16a34a;
   --vx-green-2:#22c55e;
   --vx-orange:#ff6a00;
   --vx-orange-2:#ff8a2b;
+
   --vx-ink:#111827;
   --vx-muted:#6b7280;
+
   --vx-card:rgba(255,255,255,.92);
   --vx-shadow:0 14px 34px rgba(0,0,0,.18);
   --vx-radius:18px;
@@ -27,7 +31,10 @@
 body{
   margin:0;
   font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-  background:linear-gradient(180deg,var(--vx-bg),var(--vx-bg));
+  background:
+    radial-gradient(1100px 560px at 15% 0%, rgba(255,255,255,.40), transparent 60%),
+    radial-gradient(900px 520px at 80% 25%, rgba(0,0,0,.06), transparent 60%),
+    linear-gradient(180deg,var(--vx-bg),var(--vx-bg));
   color:#1f2937;
   min-height:100vh;
 }
@@ -35,35 +42,39 @@ body{
 .wrap{max-width:1120px;margin:26px auto;padding:0 18px 44px}
 
 .topbar{
-  display:flex;justify-content:space-between;align-items:center;
+  display:flex;justify-content:space-between;align-items:center;gap:16px;
   padding:14px 16px;
   border-radius:20px;
-  background:rgba(255,255,255,.12);
-  color:#fff;
+  background:rgba(255,255,255,.30);
+  color:var(--vx-ink);
   box-shadow:var(--vx-shadow);
 }
 
 .brand{display:flex;gap:12px;align-items:center}
 .logoWrap{
   width:44px;height:44px;border-radius:14px;
-  background:rgba(255,255,255,.15);
+  background:rgba(255,255,255,.55);
   display:grid;place-items:center;
+  overflow:hidden;
+  border:1px solid rgba(0,0,0,.06);
 }
-.logoWrap img{width:44px;height:44px;object-fit:cover}
+.logoWrap img{width:44px;height:44px;object-fit:cover;display:block}
 
 h1{font-size:16px;margin:0}
-.subtitle{font-size:12.5px;opacity:.85}
+.subtitle{font-size:12.5px;color:rgba(17,24,39,.70);margin-top:2px}
 
 .badge{
   font-size:12px;
   padding:6px 10px;
   border-radius:999px;
-  background:rgba(0,0,0,.25);
+  background:rgba(255,255,255,.55);
+  border:1px solid rgba(0,0,0,.06);
   display:flex;align-items:center;gap:8px;
 }
 .dot{width:8px;height:8px;border-radius:50%;background:#bbb}
 .dot.ok{background:#22c55e}
 .dot.warn{background:#f59e0b}
+.dot.err{background:#ef4444}
 
 .grid{
   display:grid;
@@ -89,13 +100,15 @@ label{
   font-size:12px;
   font-weight:800;
   margin:12px 0 6px;
+  color:var(--vx-ink);
 }
 
-input[type=text]{
+input[type=text], select{
   width:100%;
   padding:10px 12px;
   border-radius:12px;
   border:1px solid rgba(0,0,0,.15);
+  background:#fff;
 }
 
 .form-grid{
@@ -106,7 +119,7 @@ input[type=text]{
 }
 @media(max-width:900px){.form-grid{grid-template-columns:1fr}}
 
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;align-items:center}
 
 button{
   padding:10px 14px;
@@ -126,7 +139,8 @@ button{
 }
 .btn-ghost{
   background:#fff;
-  box-shadow:0 6px 16px rgba(0,0,0,.1);
+  border:1px solid rgba(0,0,0,.08);
+  box-shadow:0 6px 16px rgba(0,0,0,.08);
 }
 button:disabled{opacity:.5;cursor:not-allowed}
 
@@ -135,11 +149,12 @@ button:disabled{opacity:.5;cursor:not-allowed}
   margin-top:12px;
   padding:10px 12px;
   border-radius:12px;
-  border:1px dashed rgba(147,17,126,.3);
-  background:rgba(147,17,126,.06);
-  display:flex;justify-content:space-between;flex-wrap:wrap;
+  border:1px dashed rgba(17,24,39,.18);
+  background:rgba(255,255,255,.55);
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
 }
 
+/* Table: fully centered, consistent outlining */
 table{
   width:100%;
   border-collapse: collapse;
@@ -147,25 +162,22 @@ table{
   background:#fff;
   border-radius:14px;
   overflow:hidden;
-  table-layout: fixed; /* IMPORTANT */
+  table-layout: fixed;
 }
-
 th, td{
   padding:10px;
-  border:1px solid rgba(0,0,0,.12); /* consistent outline */
+  border:1px solid rgba(0,0,0,.12);
   font-size:13px;
-  text-align:center;              /* CENTRALISE EVERYTHING */
+  text-align:center;
   vertical-align:middle;
   word-wrap: break-word;
 }
-
 th{
   background:#f9fafb;
   color:#6b7280;
   font-size:12px;
   font-weight:700;
 }
-th{background:#f9fafb;color:#6b7280;font-size:12px}
 
 /* Bullet list */
 .sizes-list{
@@ -175,170 +187,450 @@ th{background:#f9fafb;color:#6b7280;font-size:12px}
   line-height:1.5;
 }
 .sizes-list li{margin:4px 0}
+
+.hr{
+  height:1px;
+  background:rgba(0,0,0,.08);
+  margin:14px 0 8px;
+}
+
+.inline{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+  margin-top:10px;
+}
+.inline .field{
+  min-width:220px;
+  flex: 1 1 240px;
+}
 </style>
 </head>
 
 <body>
 <div class="wrap">
 
-<div class="topbar">
-  <div class="brand">
-    <div class="logoWrap"><img src="logo.png"></div>
-    <div>
-      <h1>EU Bed Size Mapper</h1>
-      <div class="subtitle">Auto-detects CSV delimiter</div>
+  <div class="topbar">
+    <div class="brand">
+      <div class="logoWrap"><img src="logo.png" alt="logo"></div>
+      <div>
+        <h1>EU Bed Size Mapper</h1>
+        <div class="subtitle">Auto-detects CSV delimiter • Maps to nearest EU standard size</div>
+      </div>
+    </div>
+    <div class="badge">
+      <span class="dot" id="statusDot"></span>
+      <span id="statusText">Waiting for file…</span>
     </div>
   </div>
-  <div class="badge">
-    <span class="dot" id="statusDot"></span>
-    <span id="statusText">Waiting for file…</span>
-  </div>
-</div>
 
-<div class="grid">
+  <div class="grid">
 
-<div class="card">
-  <h2>Import & mapping</h2>
-  <div class="muted">Runs locally in your browser.</div>
+    <div class="card">
+      <h2>Import & mapping</h2>
+      <div class="muted">Runs locally in your browser — your CSV is not uploaded anywhere.</div>
 
-  <input id="fileInput" type="file" accept=".csv">
-  <div class="actions">
-    <button class="btn-upload" id="uploadBtn">Upload CSV</button>
-  </div>
+      <input id="fileInput" type="file" accept=".csv,text/csv" />
 
-  <div class="fileline" id="fileLine" style="display:none">
-    <div>
-      <strong id="fileName"></strong>
-      <div class="small muted" id="fileMeta"></div>
+      <div class="actions">
+        <button class="btn-upload" id="uploadBtn" type="button">Upload CSV</button>
+        <button class="btn-ghost" id="resetBtn" type="button" disabled>Reset</button>
+        <span class="small muted">Upload a CSV with item number + width/length (cm). Decimal comma supported.</span>
+      </div>
+
+      <div class="fileline" id="fileLine" style="display:none">
+        <div>
+          <strong id="fileName"></strong>
+          <div class="small muted" id="fileMeta"></div>
+          <div class="small muted" id="detectedDelim"></div>
+        </div>
+        <button class="btn-ghost" id="changeFileBtn" type="button">Change file</button>
+      </div>
+
+      <div class="form-grid">
+        <div>
+          <label>Item column</label>
+          <input id="itemCol" placeholder="item_number, sku, itemno" />
+        </div>
+        <div>
+          <label>Width column</label>
+          <input id="wCol" placeholder="width, mattress_width" />
+        </div>
+        <div>
+          <label>Length column</label>
+          <input id="lCol" placeholder="length, mattress_length" />
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <!-- 2) Comma delimiter selection for download -->
+      <div class="inline">
+        <div class="field">
+          <label>Download delimiter</label>
+          <select id="downloadDelimiter">
+            <option value="," selected>Comma (,)</option>
+            <option value=";">Semicolon (;)</option>
+            <option value="\t">Tab</option>
+          </select>
+          <div class="small muted" style="margin-top:6px;">Tip: comma is usually best for Excel/Sheets imports.</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn-exec" id="processBtn" type="button">Execute</button>
+        <button class="btn-ghost" id="downloadBtn" type="button" disabled>Download enriched CSV</button>
+      </div>
     </div>
-    <button class="btn-ghost" id="changeFileBtn">Change</button>
+
+    <div class="card">
+      <h2>Standard sizes</h2>
+      <div class="muted">EU mattress standards</div>
+      <ul class="sizes-list" id="sizesList"></ul>
+      <div class="small muted" style="margin-top:10px;">
+        Output columns added: proposed_standard_size, proposed_standard_name, distance
+      </div>
+    </div>
+
   </div>
 
-  <div class="form-grid">
-    <div><label>Item column</label><input id="itemCol"></div>
-    <div><label>Width column</label><input id="wCol"></div>
-    <div><label>Length column</label><input id="lCol"></div>
+  <div class="card" style="margin-top:18px;">
+    <h2>Preview</h2>
+    <div class="muted">Shows the first 25 lines of the enriched output.</div>
+    <div id="previewWrap"></div>
   </div>
-
-  <div class="actions">
-    <button class="btn-exec" id="processBtn">Execute</button>
-    <button class="btn-ghost" id="downloadBtn" disabled>Download CSV</button>
-  </div>
-</div>
-
-<div class="card">
-  <h2>Standard sizes</h2>
-  <ul class="sizes-list" id="sizesList"></ul>
-</div>
-
-</div>
-
-<div class="card" style="margin-top:18px">
-  <h2>Preview</h2>
-  <div id="previewWrap"></div>
-</div>
 
 </div>
 
 <script>
-const STANDARD_SIZES=[
-  {name:"Single",w:80,l:200},
-  {name:"Single",w:90,l:200},
-  {name:"Small Double",w:120,l:200},
-  {name:"Double",w:140,l:200},
-  {name:"King",w:160,l:200},
-  {name:"Super King",w:180,l:200},
-  {name:"Extra Large",w:200,l:200},
+/* ---------------------- CONFIG / DATA ---------------------- */
+
+const STANDARD_SIZES = [
+  { name: "Single",       w: 80,  l: 200 },
+  { name: "Single",       w: 90,  l: 200 },
+  { name: "Small Double", w: 120, l: 200 },
+  { name: "Double",       w: 140, l: 200 },
+  { name: "King",         w: 160, l: 200 },
+  { name: "Super King",   w: 180, l: 200 },
+  { name: "Extra Large",  w: 200, l: 200 },
 ];
 
-const sizesList=document.getElementById("sizesList");
-STANDARD_SIZES.forEach(s=>{
-  const li=document.createElement("li");
-  li.textContent=`${s.w}x${s.l} (${s.name})`;
-  sizesList.appendChild(li);
+/* ---------------------- UI REFS ---------------------- */
+
+const sizesListEl = document.getElementById("sizesList");
+const fileInput = document.getElementById("fileInput");
+const uploadBtn = document.getElementById("uploadBtn");
+const changeFileBtn = document.getElementById("changeFileBtn");
+const resetBtn = document.getElementById("resetBtn");
+const fileLine = document.getElementById("fileLine");
+const fileNameEl = document.getElementById("fileName");
+const fileMetaEl = document.getElementById("fileMeta");
+const detectedDelimEl = document.getElementById("detectedDelim");
+
+const itemColEl = document.getElementById("itemCol");
+const wColEl = document.getElementById("wCol");
+const lColEl = document.getElementById("lCol");
+
+const downloadDelimiterEl = document.getElementById("downloadDelimiter");
+
+const processBtn = document.getElementById("processBtn");
+const downloadBtn = document.getElementById("downloadBtn");
+const previewWrap = document.getElementById("previewWrap");
+
+const statusDot = document.getElementById("statusDot");
+const statusText = document.getElementById("statusText");
+
+/* ---------------------- STATE ---------------------- */
+
+let LAST_OUTPUT = null; // { delimiter, header, rows }
+let DETECTED_INPUT_DELIM = null;
+
+/* ---------------------- RENDER: STANDARD SIZES ---------------------- */
+
+sizesListEl.innerHTML = "";
+STANDARD_SIZES.forEach(s => {
+  const li = document.createElement("li");
+  li.textContent = `${s.w}x${s.l} (${s.name})`;
+  sizesListEl.appendChild(li);
 });
 
+/* ---------------------- HELPERS ---------------------- */
+
+function setStatus(text, kind="muted") {
+  statusText.textContent = text;
+  statusDot.className = "dot";
+  if (kind === "ok") statusDot.classList.add("ok");
+  if (kind === "warn") statusDot.classList.add("warn");
+  if (kind === "err") statusDot.classList.add("err");
+}
+
 function detectDelimiter(text){
-  const lines=text.split(/\r?\n/).slice(0,5).join("\n");
-  const candidates=[",",";","\t"];
-  let best={d:",",score:-1};
-  for(const d of candidates){
-    const c=lines.split(d).length;
-    if(c>best.score) best={d,score:c};
+  const lines = text.split(/\r?\n/).slice(0,5).join("\n");
+  const candidates = [",", ";", "\t"];
+  let best = { d: ",", score: -1 };
+  for (const d of candidates) {
+    const c = lines.split(d).length;
+    if (c > best.score) best = { d, score: c };
   }
   return best.d;
 }
 
-const fileInput=document.getElementById("fileInput");
-const uploadBtn=document.getElementById("uploadBtn");
-const changeFileBtn=document.getElementById("changeFileBtn");
-const fileLine=document.getElementById("fileLine");
-const fileName=document.getElementById("fileName");
-const fileMeta=document.getElementById("fileMeta");
-const processBtn=document.getElementById("processBtn");
-const downloadBtn=document.getElementById("downloadBtn");
-const previewWrap=document.getElementById("previewWrap");
-const statusDot=document.getElementById("statusDot");
-const statusText=document.getElementById("statusText");
+function toCSV(rows, delimiter) {
+  const esc = (v) => {
+    const s = String(v ?? "");
+    if (s.includes('"') || s.includes("\n") || s.includes("\r") || s.includes(delimiter)) {
+      return `"${s.replace(/"/g, '""')}"`;
+    }
+    return s;
+  };
+  return rows.map(r => r.map(esc).join(delimiter)).join("\n");
+}
 
-uploadBtn.onclick=()=>fileInput.click();
-changeFileBtn.onclick=()=>fileInput.click();
+/* Simple split parser (works for unquoted CSV) */
+function splitRows(text) {
+  return text.trim().split(/\r?\n/);
+}
 
-fileInput.onchange=()=>{
-  const f=fileInput.files[0];
-  if(!f)return;
-  fileLine.style.display="flex";
-  fileName.textContent=f.name;
-  fileMeta.textContent=Math.round(f.size/1024)+" KB";
-  statusText.textContent="Ready";
-  statusDot.className="dot ok";
-};
+function parseSimpleCSV(text, delimiter) {
+  const lines = splitRows(text);
+  return lines.map(line => line.split(delimiter));
+}
 
-processBtn.onclick=async()=>{
-  if(!fileInput.files.length)return;
-  const text=await fileInput.files[0].text();
+/* Decimal comma support */
+function parseNumberEU(v) {
+  const s = String(v ?? "").trim();
+  if (!s) return NaN;
+  return Number(s.replace(",", "."));
+}
 
-  const delimiter=detectDelimiter(text);
-  const rows=text.trim().split("\n").map(r=>r.split(delimiter));
+/* Nearest using absolute distance (L1). Tie -> smallest area -> smallest width -> smallest length */
+function pickNearestSize(w, l) {
+  let ww = w, ll = l;
+  if (ww > ll) [ww, ll] = [ll, ww];
 
-  const out=[...rows[0],"proposed_standard_size","proposed_standard_name","distance"];
-  const body=[];
+  let best = null;
 
-  for(let i=1;i<rows.length;i++){
-    const r=rows[i];
-      const w = Number(String(r[1]).replace(",", "."));
-      const l = Number(String(r[2]).replace(",", "."));
+  for (const s of STANDARD_SIZES) {
+    const d = Math.abs(ww - s.w) + Math.abs(ll - s.l);
+    const area = s.w * s.l;
 
-    if(!w||!l){body.push([...r,"","",""]);continue;}
-    let best=null;
-    STANDARD_SIZES.forEach(s=>{
-      const d=Math.abs(w-s.w)+Math.abs(l-s.l);
-      if(!best||d<best.d||(d===best.d&&s.w*s.l<best.w*best.l))
-        best={...s,d};
-    });
-    body.push([...r,`${best.w}x${best.l}`,best.name,best.d]);
+    if (!best) { best = { ...s, d, area }; continue; }
+    if (d < best.d) { best = { ...s, d, area }; continue; }
+    if (d > best.d) continue;
+
+    // tie-break
+    if (area < best.area) { best = { ...s, d, area }; continue; }
+    if (area > best.area) continue;
+
+    if (s.w < best.w) { best = { ...s, d, area }; continue; }
+    if (s.w > best.w) continue;
+
+    if (s.l < best.l) { best = { ...s, d, area }; continue; }
   }
 
-  render(out,body);
-  downloadBtn.disabled=false;
-};
+  return best;
+}
 
-function render(h,rows){
-  const t=document.createElement("table");
-  const tr=document.createElement("tr");
-  h.forEach(x=>{const th=document.createElement("th");th.textContent=x;tr.appendChild(th)});
-  t.appendChild(tr);
-  rows.slice(0,200).forEach(r=>{
-    const tr=document.createElement("tr");
-    r.forEach(c=>{const td=document.createElement("td");td.textContent=c||"";tr.appendChild(td)});
+function renderPreview(header, rows, limit=25) {
+  const t = document.createElement("table");
+
+  const trh = document.createElement("tr");
+  header.forEach(h => {
+    const th = document.createElement("th");
+    th.textContent = h;
+    trh.appendChild(th);
+  });
+  t.appendChild(trh);
+
+  rows.slice(0, limit).forEach(r => {
+    const tr = document.createElement("tr");
+    r.forEach(c => {
+      const td = document.createElement("td");
+      td.textContent = c ?? "";
+      tr.appendChild(td);
+    });
     t.appendChild(tr);
   });
-  previewWrap.innerHTML="";
+
+  previewWrap.innerHTML = "";
   previewWrap.appendChild(t);
 }
+
+/* ---------------------- RESET FEATURE ---------------------- */
+
+function resetAll() {
+  // reset file input + UI
+  fileInput.value = "";
+  fileLine.style.display = "none";
+  fileNameEl.textContent = "";
+  fileMetaEl.textContent = "";
+  detectedDelimEl.textContent = "";
+
+  // reset outputs
+  previewWrap.innerHTML = "";
+  downloadBtn.disabled = true;
+  LAST_OUTPUT = null;
+  DETECTED_INPUT_DELIM = null;
+
+  setStatus("Waiting for file…", "muted");
+}
+
+resetBtn.addEventListener("click", resetAll);
+
+/* ---------------------- FILE PICKER ---------------------- */
+
+uploadBtn.addEventListener("click", () => fileInput.click());
+changeFileBtn.addEventListener("click", () => fileInput.click());
+
+fileInput.addEventListener("change", async () => {
+  LAST_OUTPUT = null;
+  downloadBtn.disabled = true;
+  previewWrap.innerHTML = "";
+
+  if (!fileInput.files?.length) {
+    resetAll();
+    return;
+  }
+
+  const f = fileInput.files[0];
+  fileLine.style.display = "flex";
+  fileNameEl.textContent = f.name;
+  fileMetaEl.textContent = `${Math.round(f.size/1024)} KB`;
+
+  // detect delimiter from file contents (for info only)
+  try {
+    const text = await f.text();
+    DETECTED_INPUT_DELIM = detectDelimiter(text);
+    const label = DETECTED_INPUT_DELIM === "\t" ? "Tab" : DETECTED_INPUT_DELIM;
+    detectedDelimEl.textContent = `Detected input delimiter: ${label}`;
+  } catch {
+    DETECTED_INPUT_DELIM = null;
+    detectedDelimEl.textContent = "";
+  }
+
+  resetBtn.disabled = false;
+  setStatus("Ready to execute", "ok");
+});
+
+/* ---------------------- EXECUTE ---------------------- */
+
+processBtn.addEventListener("click", async () => {
+  if (!fileInput.files?.length) {
+    setStatus("Upload a CSV first", "warn");
+    return;
+  }
+
+  const f = fileInput.files[0];
+  const text = await f.text();
+
+  const inputDelimiter = detectDelimiter(text);
+  DETECTED_INPUT_DELIM = inputDelimiter;
+
+  const rows = parseSimpleCSV(text, inputDelimiter);
+  if (!rows.length) {
+    setStatus("CSV appears empty", "err");
+    return;
+  }
+
+  const header = rows[0].map(h => String(h ?? "").trim());
+  const data = rows.slice(1);
+
+  // Column guessing (keeps it practical without making the UI mandatory)
+  const norm = (s) => String(s ?? "").trim().toLowerCase().replace(/\s+/g, "_");
+  const findIdx = (hint, guesses) => {
+    const user = norm(hint);
+    if (user) {
+      const i = header.findIndex(h => norm(h) === user);
+      if (i !== -1) return i;
+    }
+    for (const g of guesses) {
+      const i = header.findIndex(h => norm(h) === g);
+      if (i !== -1) return i;
+    }
+    return -1;
+  };
+
+  let itemIdx = findIdx(itemColEl.value, ["item_number","itemno","sku","article","articlenumber","item","product_id","id"]);
+  let wIdx    = findIdx(wColEl.value,    ["width","w","mat_width","mattress_width","bed_width","size_w"]);
+  let lIdx    = findIdx(lColEl.value,    ["length","l","mat_length","mattress_length","bed_length","size_l"]);
+
+  // Fallback if user CSV is exactly (item_number, width, length)
+  if (itemIdx === -1) itemIdx = 0;
+  if (wIdx === -1 && header.length > 1) wIdx = 1;
+  if (lIdx === -1 && header.length > 2) lIdx = 2;
+
+  const outHeader = [...header, "proposed_standard_size", "proposed_standard_name", "distance"];
+  const outRows = [];
+
+  let ok = 0, bad = 0;
+
+  for (const r of data) {
+    const row = [...r];
+
+    const w = parseNumberEU(r[wIdx]);
+    const l = parseNumberEU(r[lIdx]);
+
+    if (!Number.isFinite(w) || !Number.isFinite(l)) {
+      bad++;
+      outRows.push([...row, "", "", ""]);
+      continue;
+    }
+
+    const best = pickNearestSize(w, l);
+    ok++;
+
+    outRows.push([
+      ...row,
+      `${best.w}x${best.l}`,
+      best.name,
+      String(best.d)
+    ]);
+  }
+
+  // 4) Limit preview to 25 lines
+  renderPreview(outHeader, outRows, 25);
+
+  // 3) Enable download feature with selectable delimiter
+  LAST_OUTPUT = {
+    delimiter: downloadDelimiterEl.value === "\\t" ? "\t" : downloadDelimiterEl.value,
+    header: outHeader,
+    rows: outRows,
+  };
+  downloadBtn.disabled = false;
+
+  if (bad) setStatus(`Executed: ${ok} mapped, ${bad} missing dims`, "warn");
+  else setStatus(`Executed: ${ok} mapped`, "ok");
+});
+
+/* ---------------------- DOWNLOAD ---------------------- */
+
+downloadDelimiterEl.addEventListener("change", () => {
+  // Keep LAST_OUTPUT delimiter in sync (if user changes before downloading)
+  if (LAST_OUTPUT) {
+    LAST_OUTPUT.delimiter = downloadDelimiterEl.value === "\\t" ? "\t" : downloadDelimiterEl.value;
+  }
+});
+
+downloadBtn.addEventListener("click", () => {
+  if (!LAST_OUTPUT) return;
+
+  const csvText = toCSV([LAST_OUTPUT.header, ...LAST_OUTPUT.rows], LAST_OUTPUT.delimiter);
+  const blob = new Blob([csvText], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "enriched_bed_sizes.csv";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  URL.revokeObjectURL(url);
+});
+
+/* ---------------------- INIT ---------------------- */
+setStatus("Waiting for file…", "muted");
 </script>
 </body>
 </html>
-
-
-
