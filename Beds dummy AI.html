@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>EU Bed Size Mapper (CSV)</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 24px; }
+    h1 { margin: 0 0 8px; }
+    .muted { color: #555; }
+    .card { border: 1px solid #ddd; border-radius: 12px; padding: 16px; margin: 16px 0; }
+    label { font-weight: 600; display: block; margin: 10px 0 6px; }
+    input[type="text"], select { padding: 8px 10px; border: 1px solid #ccc; border-radius: 10px; width: 100%; max-width: 520px; }
+    input[type="file"] { margin: 8px 0; }
+    button { padding: 10px 14px; border: 1px solid #ccc; border-radius: 10px; background: #fff; cursor: pointer; }
+    button:hover { background: #f6f6f6; }
+    .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; }
+    .col { flex: 1; min-width: 240px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #ddd; padding: 8px; font-size: 14px; }
+    th { background: #fafafa; text-align: left; }
+    .pill { display: inline-block; padding: 2px 8px; border: 1px solid #ddd; border-radius: 999px; font-size: 12px; }
+    .ok { border-color: #b7e3b7; background: #f0fff0; }
+    .warn { border-color: #ffd6a6; background: #fff7ed; }
+    .error { border-color: #ffb4b4; background: #fff1f1; }
+    .small { font-size: 12px; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+  </style>
+</head>
+<body>
+  <h1>EU Bed Size Mapper</h1>
+  <div class="muted">Upload a CSV with item numbers + dimensions (cm). The app proposes the nearest standard EU bed size. Ties → smallest option.</div>
+
+  <div class="card">
+    <div class="row">
+      <div class="col">
+        <label>CSV file</label>
+        <input id="fileInput" type="file" accept=".csv,text/csv" />
+        <div id="fileInfo" class="small muted"></div>
+      </div>
+      <div class="col">
+        <label>Delimiter</label>
+        <select id="delimiter">
+          <option value="auto">Auto-detect</option>
+          <option value=",">Comma (,)</option>
+          <option value=";">Semicolon (;)</option>
+          <option value="\t">Tab</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top: 12px;">
+      <div class="col">
+        <label>Item number column (header)</label>
+        <input id="itemCol" type="text" placeholder="e.g., item_number, sku, itemno" />
+      </div>
+      <div class="col">
+        <label>Width column (header)</label>
+        <input id="wCol" type="text" placeholder="e.g., width, w, mattress_width" />
+      </div>
+      <div class="col">
+        <label>Length column (header)</label>
+        <input id="lCol" type="text" placeholder="e.g., length, l, mattress_length" />
+      </div>
+    </div>
+
+    <div class="row" style="margin-top: 12px;">
+      <div class="col">
+        <label>Distance rule</label>
+        <select id="distanceRule">
+          <option value="L1">Absolute distance: |Δw| + |Δl| (recommended)</option>
+          <option value="L2">Euclidean: sqrt(Δw² + Δl²)</option>
+        </select>
+        <div class="small muted">Tie-break: smallest area → smallest width → smallest length.</div>
+      </div>
+
+      <div class="col">
+        <label>Standard EU sizes used</label>
+        <div class="small mono" id="sizesList"></div>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top: 14px;">
+      <button id="processBtn">Process CSV</button>
+      <button id="downloadBtn" disabled>Download enriched CSV</button>
+      <span id="status" class="pill muted">Waiting for file…</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div><strong>Preview</strong> <span class="muted small">(first 200 rows)</span></div>
+    <div id="previewWrap"></div>
+  </div>
+
+<script>
+  // ---- Standard EU bed sizes (cm) ----
+  // You can add/remove sizes as needed.
+  const STANDARD_SIZES = [
+    { name: "Single", w: 80,  l: 200 },
+    { name: "Single", w: 90,  l: 200 },
+    { name: "Small Double", w: 120, l: 200 },
+    { name: "Double", w: 140, l: 200 },
+    { name: "King", w: 160, l: 200 },
+    { name: "Super King", w: 180, l: 200 },
+    { name: "Extra Large", w: 200, l: 200 },
+  ];
+
+  const sizesListEl = document.getElementById("sizesList");
+  sizesListEl.textContent = STANDARD_SIZES.map(s => `${s.w}x${s.l}(${s.name})`).join(", ");
+
+  const fileInput = document.getElementById("fileInput");
+  const processBtn = document.getElementById("processBtn");
+  const downloadBtn = document.getElementById("downloadBtn");
+  const statusEl = document.getElementById("status");
+  const previewWrap = document.getElementById("previewWrap");
+  const fileInfo = document.getElementById("fileInfo");
+
+  const itemColEl = document.getElementById("itemCol");
+  const wColEl = document.getElementById("wCol");
+  const lColEl = document.getElementById("lCol");
+  const delimiterEl = document.getElementById("delimiter");
+  const distanceRuleEl = document.getElementById("distanceRule");
+
+  let enrichedRows = [];
+  let enrichedHeader = [];
+
+  function setStatus(text, kind="muted") {
+    statusEl.className = "pill " + (kind || "muted");
+    statusEl.textContent = text;
+  }
+
+  function detectDelimiter(text) {
+    // simple heuristic: compare counts in first non-empty line
+    const lines = text.split(/\r?\n/).filter(l => l.trim().length);
+    const sample = lines.slice(0, 5).join("\n");
+    const candidates = [",", ";", "\t"];
+    let best = { d: ",", score: -1 };
+    for (const d of candidates) {
+      const count = (sample.match(new RegExp(escapeRegExp(d), "g")) || []).length;
+      if (count > best.score) best = { d, score: count };
+    }
+    return best.d;
+  }
+
+  function escapeRegExp(s) {
+    return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+
+  // Basic CSV parsing supporting quoted fields.
+  function parseCSV(text, delimiter) {
+    const rows = [];
+    let row = [];
+    let field = "";
+    let inQuotes = false;
+
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      const next = text[i + 1];
+
+      if (c === '"') {
+        if (inQuotes && next === '"') { // escaped quote
+          field += '"';
+          i++;
+        } else {
+          inQuotes = !inQuotes;
+        }
+      } else if (!inQuotes && c === delimiter) {
+        row.push(field);
+        field = "";
+      } else if (!inQuotes && (c === "\n" || c === "\r")) {
+        if (c === "\r" && next === "\n") i++; // CRLF
+        row.push(field);
+        rows.push(row);
+        row = [];
+        field = "";
+      } else {
+        field += c;
+      }
+    }
+    // last field
+    if (field.length || row.length) {
+      row.push(field);
+      rows.push(row);
+    }
+
+    // Remove trailing empty rows
+    while (rows.length && rows[rows.length - 1].every(v => (v ?? "").trim() === "")) rows.pop();
+    return rows;
+  }
+
+  function normalizeHeader(h) {
+    return (h || "").trim().toLowerCase().replace(/\s+/g, "_");
+  }
+
+  function findColumnIndex(headers, userInput) {
+    if (!userInput) return -1;
+    const target = normalizeHeader(userInput);
+    return headers.findIndex(h => normalizeHeader(h) === target);
+  }
+
+  function guessColumn(headers, guesses) {
+    const norm = headers.map(normalizeHeader);
+    for (const g of guesses) {
+      const idx = norm.indexOf(g);
+      if (idx !== -1) return idx;
+    }
+    return -1;
+  }
+
+  function toNumber(x) {
+    if (x == null) return NaN;
+    // handle "83x200" or "83 x 200" inside a single cell
+    const s = String(x).trim();
+    // if number with comma decimal
+    const num = Number(s.replace(",", "."));
+    return Number.isFinite(num) ? num : NaN;
+  }
+
+  function extractDimsFromCell(cell) {
+    const s = String(cell ?? "").trim().toLowerCase();
+    // match like "83x200", "83 x 200", "83*200", "83×200"
+    const m = s.match(/(\d+(?:[.,]\d+)?)\s*(?:x|×|\*|by)\s*(\d+(?:[.,]\d+)?)/i);
+    if (!m) return null;
+    const w = Number(m[1].replace(",", "."));
+    const l = Number(m[2].replace(",", "."));
+    if (!Number.isFinite(w) || !Number.isFinite(l)) return null;
+    return { w, l };
+  }
+
+  function distance(w, l, sw, sl, rule) {
+    const dw = Math.abs(w - sw);
+    const dl = Math.abs(l - sl);
+    if (rule === "L2") return Math.sqrt(dw*dw + dl*dl);
+    return dw + dl; // L1
+  }
+
+  function pickNearestSize(w, l, rule) {
+    // ensure w is the smaller dimension (beds are typically WxL, W <= L)
+    let ww = w, ll = l;
+    if (ww > ll) [ww, ll] = [ll, ww];
+
+    let best = null;
+
+    for (const s of STANDARD_SIZES) {
+      const d = distance(ww, ll, s.w, s.l, rule);
+      const area = s.w * s.l;
+      if (!best) {
+        best = { ...s, d, area };
+        continue;
+      }
+
+      // Primary: min distance
+      if (d < best.d) {
+        best = { ...s, d, area };
+        continue;
+      }
+      if (d > best.d) continue;
+
+      // Tie: choose smallest option (area → width → length)
+      if (area < best.area) {
+        best = { ...s, d, area };
+        continue;
+      }
+      if (area > best.area) continue;
+
+      if (s.w < best.w) {
+        best = { ...s, d, area };
+        continue;
+      }
+      if (s.w > best.w) continue;
+
+      if (s.l < best.l) {
+        best = { ...s, d, area };
+        continue;
+      }
+    }
+
+    return best;
+  }
+
+  function toCSV(rows, delimiter=",") {
+    const esc = (v) => {
+      const s = String(v ?? "");
+      if (s.includes('"') || s.includes("\n") || s.includes("\r") || s.includes(delimiter)) {
+        return `"${s.replace(/"/g, '""')}"`;
+      }
+      return s;
+    };
+    return rows.map(r => r.map(esc).join(delimiter)).join("\n");
+  }
+
+  function renderPreview(header, rows) {
+    const max = Math.min(rows.length, 200);
+    const table = document.createElement("table");
+    const thead = document.createElement("thead");
+    const trh = document.createElement("tr");
+    header.forEach(h => {
+      const th = document.createElement("th");
+      th.textContent = h;
+      trh.appendChild(th);
+    });
+    thead.appendChild(trh);
+    table.appendChild(thead);
+
+    const tbody = document.createElement("tbody");
+    for (let i = 0; i < max; i++) {
+      const tr = document.createElement("tr");
+      rows[i].forEach(v => {
+        const td = document.createElement("td");
+        td.textContent = v ?? "";
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    }
+    table.appendChild(tbody);
+
+    previewWrap.innerHTML = "";
+    previewWrap.appendChild(table);
+  }
+
+  fileInput.addEventListener("change", () => {
+    enrichedRows = [];
+    enrichedHeader = [];
+    downloadBtn.disabled = true;
+    previewWrap.innerHTML = "";
+    if (!fileInput.files?.length) {
+      fileInfo.textContent = "";
+      setStatus("Waiting for file…", "muted");
+      return;
+    }
+    const f = fileInput.files[0];
+    fileInfo.textContent = `${f.name} (${Math.round(f.size/1024)} KB)`;
+    setStatus("Ready to process", "ok");
+  });
+
+  processBtn.addEventListener("click", async () => {
+    if (!fileInput.files?.length) {
+      setStatus("Please choose a CSV file first", "warn");
+      return;
+    }
+
+    const f = fileInput.files[0];
+    const text = await f.text();
+
+    let delimiter = delimiterEl.value;
+    if (delimiter === "auto") delimiter = detectDelimiter(text);
+    if (delimiter === "\\t") delimiter = "\t";
+
+    let rows = parseCSV(text, delimiter);
+    if (!rows.length) {
+      setStatus("CSV appears empty", "error");
+      return;
+    }
+
+    // Header row
+    const header = rows[0].map(h => String(h ?? "").trim());
+    const data = rows.slice(1);
+
+    // Determine indices (from user input or guesses)
+    let itemIdx = findColumnIndex(header, itemColEl.value) ;
+    let wIdx = findColumnIndex(header, wColEl.value);
+    let lIdx = findColumnIndex(header, lColEl.value);
+
+    // guesses if user didn't specify
+    if (itemIdx === -1) itemIdx = guessColumn(header, ["item_number","itemno","sku","article","articlenumber","item","product_id","id"]);
+    if (wIdx === -1) wIdx = guessColumn(header, ["width","w","mat_width","mattress_width","bed_width","size_w"]);
+    if (lIdx === -1) lIdx = guessColumn(header, ["length","l","mat_length","mattress_length","bed_length","size_l"]);
+
+    // if width/length not found, try a single "dimensions" style column
+    let dimIdx = -1;
+    if (wIdx === -1 || lIdx === -1) {
+      dimIdx = guessColumn(header, ["dimensions","dimension","size","mattress_size","bed_size"]);
+    }
+
+    if (itemIdx === -1) itemIdx = 0; // fallback to first column
+
+    const rule = distanceRuleEl.value;
+
+    const outHeader = [...header, "proposed_standard_size", "proposed_standard_name", "distance", "normalized_input_w", "normalized_input_l"];
+    const outRows = [];
+
+    let okCount = 0, badCount = 0;
+
+    for (const r of data) {
+      const row = [...r];
+      const rawItem = r[itemIdx] ?? "";
+
+      // read dims
+      let w = Number.NaN, l = Number.NaN;
+
+      if (wIdx !== -1 && lIdx !== -1) {
+        w = toNumber(r[wIdx]);
+        l = toNumber(r[lIdx]);
+      } else if (dimIdx !== -1) {
+        const d = extractDimsFromCell(r[dimIdx]);
+        if (d) { w = d.w; l = d.l; }
+      } else {
+        // last resort: scan all cells for something like "83x200"
+        for (const cell of r) {
+          const d = extractDimsFromCell(cell);
+          if (d) { w = d.w; l = d.l; break; }
+        }
+      }
+
+      if (!Number.isFinite(w) || !Number.isFinite(l)) {
+        badCount++;
+        outRows.push([...row, "", "", "", "", ""]);
+        continue;
+      }
+
+      // normalize orientation
+      let ww = w, ll = l;
+      if (ww > ll) [ww, ll] = [ll, ww];
+
+      const best = pickNearestSize(ww, ll, rule);
+      okCount++;
+
+      outRows.push([
+        ...row,
+        `${best.w}x${best.l}`,
+        best.name,
+        String(best.d),
+        String(ww),
+        String(ll),
+      ]);
+    }
+
+    enrichedHeader = outHeader;
+    enrichedRows = outRows;
+
+    renderPreview(enrichedHeader, enrichedRows);
+
+    downloadBtn.disabled = false;
+    setStatus(`Done: ${okCount} mapped, ${badCount} missing dims`, badCount ? "warn" : "ok");
+  });
+
+  downloadBtn.addEventListener("click", () => {
+    if (!enrichedHeader.length) return;
+    const delimiter = ","; // output as comma CSV
+    const csv = toCSV([enrichedHeader, ...enrichedRows], delimiter);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "enriched_bed_sizes.csv";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    URL.revokeObjectURL(url);
+  });
+</script>
+</body>
+</html>
