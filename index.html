@@ -10,7 +10,7 @@
 
 <style>
 :root{
-  --vx-bg:#D3B7DA;
+  --vx-bg:#D3b7da;
   --vx-green:#16a34a;
   --vx-green-2:#22c55e;
   --vx-orange:#ff6a00;
@@ -91,7 +91,7 @@ label{
   margin:12px 0 6px;
 }
 
-input[type=text],select{
+input[type=text]{
   width:100%;
   padding:10px 12px;
   border-radius:12px;
@@ -100,16 +100,11 @@ input[type=text],select{
 
 .form-grid{
   display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-columns:repeat(3,minmax(0,1fr));
   gap:14px 16px;
   margin-top:12px;
 }
-.form-grid.three{
-  grid-template-columns:repeat(3,minmax(0,1fr));
-}
-@media(max-width:900px){
-  .form-grid,.form-grid.three{grid-template-columns:1fr}
-}
+@media(max-width:900px){.form-grid{grid-template-columns:1fr}}
 
 .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
 
@@ -157,7 +152,7 @@ th,td{
 }
 th{background:#f9fafb;color:#6b7280;font-size:12px}
 
-/* BULLET LIST */
+/* Bullet list */
 .sizes-list{
   margin:8px 0 0;
   padding-left:18px;
@@ -176,7 +171,7 @@ th{background:#f9fafb;color:#6b7280;font-size:12px}
     <div class="logoWrap"><img src="logo.png"></div>
     <div>
       <h1>EU Bed Size Mapper</h1>
-      <div class="subtitle">Maps dimensions to EU standards</div>
+      <div class="subtitle">Auto-detects CSV delimiter</div>
     </div>
   </div>
   <div class="badge">
@@ -205,16 +200,6 @@ th{background:#f9fafb;color:#6b7280;font-size:12px}
   </div>
 
   <div class="form-grid">
-    <div style="grid-column:1/-1">
-      <label>Delimiter</label>
-      <select id="delimiter">
-        <option value=",">Comma (,)</option>
-        <option value=";">Semicolon (;)</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="form-grid three">
     <div><label>Item column</label><input id="itemCol"></div>
     <div><label>Width column</label><input id="wCol"></div>
     <div><label>Length column</label><input id="lCol"></div>
@@ -228,7 +213,6 @@ th{background:#f9fafb;color:#6b7280;font-size:12px}
 
 <div class="card">
   <h2>Standard sizes</h2>
-  <div class="muted">EU mattress standards</div>
   <ul class="sizes-list" id="sizesList"></ul>
 </div>
 
@@ -259,6 +243,17 @@ STANDARD_SIZES.forEach(s=>{
   sizesList.appendChild(li);
 });
 
+function detectDelimiter(text){
+  const lines=text.split(/\r?\n/).slice(0,5).join("\n");
+  const candidates=[",",";","\t"];
+  let best={d:",",score:-1};
+  for(const d of candidates){
+    const c=lines.split(d).length;
+    if(c>best.score) best={d,score:c};
+  }
+  return best.d;
+}
+
 const fileInput=document.getElementById("fileInput");
 const uploadBtn=document.getElementById("uploadBtn");
 const changeFileBtn=document.getElementById("changeFileBtn");
@@ -287,9 +282,13 @@ fileInput.onchange=()=>{
 processBtn.onclick=async()=>{
   if(!fileInput.files.length)return;
   const text=await fileInput.files[0].text();
-  const rows=text.trim().split("\n").map(r=>r.split(","));
+
+  const delimiter=detectDelimiter(text);
+  const rows=text.trim().split("\n").map(r=>r.split(delimiter));
+
   const out=[...rows[0],"proposed_standard_size","proposed_standard_name","distance"];
   const body=[];
+
   for(let i=1;i<rows.length;i++){
     const r=rows[i];
     const w=+r[1],l=+r[2];
@@ -297,11 +296,12 @@ processBtn.onclick=async()=>{
     let best=null;
     STANDARD_SIZES.forEach(s=>{
       const d=Math.abs(w-s.w)+Math.abs(l-s.l);
-      if(!best||d<best.d||(d==best.d&&s.w*s.l<best.w*best.l))
+      if(!best||d<best.d||(d===best.d&&s.w*s.l<best.w*best.l))
         best={...s,d};
     });
     body.push([...r,`${best.w}x${best.l}`,best.name,best.d]);
   }
+
   render(out,body);
   downloadBtn.disabled=false;
 };
