@@ -1,274 +1,247 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>vidaXL | EU Bed Size Mapper</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>vidaXL | EU Bed Size Mapper</title>
 
-  <!-- Put your logo image in repo root as logo.png -->
-  <link rel="icon" type="image/png" href="logo.png" />
+<!-- Put your logo image in repo root as logo.png -->
+<link rel="icon" type="image/png" href="logo.png">
 
-  <style>
-    :root{
-      --vx-bg:#93117E;
+<style>
+:root{
+  --vx-bg:#D3B7DA;
+  --vx-green:#16a34a;
+  --vx-green-2:#22c55e;
+  --vx-orange:#ff6a00;
+  --vx-orange-2:#ff8a2b;
+  --vx-ink:#111827;
+  --vx-muted:#6b7280;
+  --vx-card:rgba(255,255,255,.92);
+  --vx-shadow:0 14px 34px rgba(0,0,0,.18);
+  --vx-radius:18px;
+}
 
-      --vx-orange:#ff6a00;
-      --vx-orange-2:#ff8a2b;
+*{box-sizing:border-box}
 
-      --vx-green:#16a34a;
-      --vx-green-2:#22c55e;
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  background:linear-gradient(180deg,var(--vx-bg),var(--vx-bg));
+  color:#1f2937;
+  min-height:100vh;
+}
 
-      --vx-ink:#111827;
-      --vx-text:#1f2937;
-      --vx-muted:#6b7280;
+.wrap{max-width:1120px;margin:26px auto;padding:0 18px 44px}
 
-      --vx-card:rgba(255,255,255,.92);
-      --vx-shadow:0 14px 34px rgba(0,0,0,.18);
-      --vx-radius:18px;
-    }
+.topbar{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 16px;
+  border-radius:20px;
+  background:rgba(255,255,255,.12);
+  color:#fff;
+  box-shadow:var(--vx-shadow);
+}
 
-    *{box-sizing:border-box}
+.brand{display:flex;gap:12px;align-items:center}
+.logoWrap{
+  width:44px;height:44px;border-radius:14px;
+  background:rgba(255,255,255,.15);
+  display:grid;place-items:center;
+}
+.logoWrap img{width:44px;height:44px;object-fit:cover}
 
-    body{
-      margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      color:var(--vx-text);
-      background:
-        radial-gradient(1100px 560px at 15% 0%, rgba(255,255,255,.12), transparent 60%),
-        radial-gradient(900px 520px at 80% 25%, rgba(0,0,0,.14), transparent 60%),
-        linear-gradient(180deg,var(--vx-bg),var(--vx-bg));
-      min-height:100vh;
-    }
+h1{font-size:16px;margin:0}
+.subtitle{font-size:12.5px;opacity:.85}
 
-    .wrap{max-width:1120px;margin:26px auto;padding:0 18px 44px}
+.badge{
+  font-size:12px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:rgba(0,0,0,.25);
+  display:flex;align-items:center;gap:8px;
+}
+.dot{width:8px;height:8px;border-radius:50%;background:#bbb}
+.dot.ok{background:#22c55e}
+.dot.warn{background:#f59e0b}
 
-    /* Header */
-    .topbar{
-      display:flex;justify-content:space-between;align-items:center;gap:16px;
-      padding:14px 16px;
-      border:1px solid rgba(255,255,255,.18);
-      background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.06));
-      backdrop-filter:blur(10px);
-      border-radius:20px;
-      box-shadow:0 14px 34px rgba(0,0,0,.22);
-      color:#fff;
-    }
+.grid{
+  display:grid;
+  grid-template-columns:1.25fr .75fr;
+  gap:18px;
+  margin-top:18px;
+}
+@media(max-width:980px){.grid{grid-template-columns:1fr}}
 
-    .brand{display:flex;gap:12px;align-items:center}
-    .logoWrap{
-      width:44px;height:44px;border-radius:14px;
-      background:rgba(255,255,255,.12);
-      border:1px solid rgba(255,255,255,.2);
-      display:grid;place-items:center;
-      overflow:hidden;
-    }
-    .logoWrap img{width:44px;height:44px;object-fit:cover}
+.card{
+  background:var(--vx-card);
+  border-radius:var(--vx-radius);
+  box-shadow:var(--vx-shadow);
+  padding:16px;
+}
 
-    h1{font-size:16px;margin:0}
-    .subtitle{font-size:12.5px;opacity:.85}
+h2{font-size:14px;margin:0 0 6px;color:var(--vx-ink)}
+.muted{font-size:13px;color:var(--vx-muted)}
+.small{font-size:12px}
 
-    .badge{
-      font-size:12px;padding:6px 10px;border-radius:999px;
-      background:rgba(0,0,0,.2);
-      display:flex;align-items:center;gap:8px;
-    }
-    .dot{width:8px;height:8px;border-radius:50%;background:#bbb}
-    .dot.ok{background:#22c55e}
-    .dot.warn{background:#f59e0b}
+label{
+  display:block;
+  font-size:12px;
+  font-weight:800;
+  margin:12px 0 6px;
+}
 
-    /* Layout */
-    .grid{
-      display:grid;
-      grid-template-columns:1.25fr .75fr;
-      gap:18px;
-      margin-top:18px;
-    }
-    @media(max-width:980px){.grid{grid-template-columns:1fr}}
+input[type=text],select{
+  width:100%;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid rgba(0,0,0,.15);
+}
 
-    .card{
-      background:var(--vx-card);
-      border-radius:var(--vx-radius);
-      box-shadow:var(--vx-shadow);
-      padding:16px;
-    }
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px 16px;
+  margin-top:12px;
+}
+.form-grid.three{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+}
+@media(max-width:900px){
+  .form-grid,.form-grid.three{grid-template-columns:1fr}
+}
 
-    h2{font-size:14px;margin:0 0 6px;color:var(--vx-ink)}
-    .muted{font-size:13px;color:var(--vx-muted)}
-    .small{font-size:12px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
 
-    label{
-      font-size:12px;
-      font-weight:800;
-      color:var(--vx-ink);
-      margin:12px 0 6px;
-      display:block;
-    }
+button{
+  padding:10px 14px;
+  border-radius:12px;
+  border:none;
+  font-weight:900;
+  cursor:pointer;
+}
 
-    input[type=text],select{
-      width:100%;
-      padding:10px 12px;
-      border:1px solid rgba(0,0,0,.12);
-      border-radius:12px;
-      background:#fff;
-    }
+.btn-upload{
+  background:linear-gradient(135deg,var(--vx-green),var(--vx-green-2));
+  color:#fff;
+}
+.btn-exec{
+  background:linear-gradient(135deg,var(--vx-orange),var(--vx-orange-2));
+  color:#fff;
+}
+.btn-ghost{
+  background:#fff;
+  box-shadow:0 6px 16px rgba(0,0,0,.1);
+}
+button:disabled{opacity:.5;cursor:not-allowed}
 
-    /* Form grid (alignment fix) */
-    .form-grid{
-      display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:14px 16px;
-      margin-top:12px;
-    }
-    .form-grid.three{
-      grid-template-columns:repeat(3,minmax(0,1fr));
-    }
-    @media(max-width:900px){
-      .form-grid,.form-grid.three{grid-template-columns:1fr}
-    }
+#fileInput{display:none}
+.fileline{
+  margin-top:12px;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px dashed rgba(147,17,126,.3);
+  background:rgba(147,17,126,.06);
+  display:flex;justify-content:space-between;flex-wrap:wrap;
+}
 
-    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:12px;
+}
+th,td{
+  padding:10px;
+  border-bottom:1px solid rgba(0,0,0,.1);
+  font-size:13px;
+}
+th{background:#f9fafb;color:#6b7280;font-size:12px}
 
-    button{
-      padding:10px 14px;
-      border-radius:12px;
-      border:none;
-      font-weight:900;
-      cursor:pointer;
-    }
-
-    .btn-upload{
-      color:#fff;
-      background:linear-gradient(135deg,var(--vx-green),var(--vx-green-2));
-    }
-    .btn-exec{
-      color:#fff;
-      background:linear-gradient(135deg,var(--vx-orange),var(--vx-orange-2));
-    }
-    .btn-ghost{
-      background:#fff;
-      box-shadow:0 6px 16px rgba(0,0,0,.08);
-    }
-    button:disabled{opacity:.5;cursor:not-allowed}
-
-    /* File picker */
-    #fileInput{display:none}
-    .fileline{
-      margin-top:12px;
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px dashed rgba(147,17,126,.3);
-      background:rgba(147,17,126,.06);
-      display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;
-    }
-    .fileline .name{font-weight:900;font-size:12.5px}
-
-    table{
-      width:100%;
-      border-collapse:collapse;
-      margin-top:12px;
-      background:#fff;
-      border-radius:14px;
-      overflow:hidden;
-    }
-    th,td{padding:10px;border-bottom:1px solid rgba(0,0,0,.08);font-size:13px}
-    th{background:#f9fafb;color:#6b7280;font-size:12px}
-  </style>
+/* BULLET LIST */
+.sizes-list{
+  margin:8px 0 0;
+  padding-left:18px;
+  font-size:12px;
+  line-height:1.5;
+}
+.sizes-list li{margin:4px 0}
+</style>
 </head>
 
 <body>
 <div class="wrap">
 
-  <!-- HEADER -->
-  <div class="topbar">
-    <div class="brand">
-      <div class="logoWrap"><img src="logo.png" alt="logo"></div>
-      <div>
-        <h1>EU Bed Size Mapper</h1>
-        <div class="subtitle">Maps dimensions to nearest EU standard bed size</div>
-      </div>
+<div class="topbar">
+  <div class="brand">
+    <div class="logoWrap"><img src="logo.png"></div>
+    <div>
+      <h1>EU Bed Size Mapper</h1>
+      <div class="subtitle">Maps dimensions to EU standards</div>
     </div>
-    <div class="badge">
-      <span class="dot" id="statusDot"></span>
-      <span id="statusText">Waiting for file…</span>
+  </div>
+  <div class="badge">
+    <span class="dot" id="statusDot"></span>
+    <span id="statusText">Waiting for file…</span>
+  </div>
+</div>
+
+<div class="grid">
+
+<div class="card">
+  <h2>Import & mapping</h2>
+  <div class="muted">Runs locally in your browser.</div>
+
+  <input id="fileInput" type="file" accept=".csv">
+  <div class="actions">
+    <button class="btn-upload" id="uploadBtn">Upload CSV</button>
+  </div>
+
+  <div class="fileline" id="fileLine" style="display:none">
+    <div>
+      <strong id="fileName"></strong>
+      <div class="small muted" id="fileMeta"></div>
+    </div>
+    <button class="btn-ghost" id="changeFileBtn">Change</button>
+  </div>
+
+  <div class="form-grid">
+    <div style="grid-column:1/-1">
+      <label>Delimiter</label>
+      <select id="delimiter">
+        <option value=",">Comma (,)</option>
+        <option value=";">Semicolon (;)</option>
+      </select>
     </div>
   </div>
 
-  <div class="grid">
-    <!-- LEFT -->
-    <div class="card">
-      <h2>Import & mapping</h2>
-      <div class="muted">Runs locally — CSV is never uploaded.</div>
-
-      <input id="fileInput" type="file" accept=".csv" />
-      <div class="actions">
-        <button class="btn-upload" id="uploadBtn">Upload CSV</button>
-        <span class="small muted">CSV with item number + width/length (cm)</span>
-      </div>
-
-      <div class="fileline" id="fileLine" style="display:none">
-        <div>
-          <div class="name" id="fileName"></div>
-          <div class="small muted" id="fileMeta"></div>
-        </div>
-        <button class="btn-ghost" id="changeFileBtn">Change file</button>
-      </div>
-
-      <!-- Delimiter only -->
-      <div class="form-grid">
-        <div style="grid-column:1/-1">
-          <label>Delimiter</label>
-          <select id="delimiter">
-            <option value="auto">Auto-detect</option>
-            <option value=",">Comma (,)</option>
-            <option value=";">Semicolon (;)</option>
-            <option value="\t">Tab</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Columns -->
-      <div class="form-grid three">
-        <div>
-          <label>Item number column</label>
-          <input id="itemCol" placeholder="item_number, sku" />
-        </div>
-        <div>
-          <label>Width column</label>
-          <input id="wCol" placeholder="width, mattress_width" />
-        </div>
-        <div>
-          <label>Length column</label>
-          <input id="lCol" placeholder="length, mattress_length" />
-        </div>
-      </div>
-
-      <div class="actions">
-        <button class="btn-exec" id="processBtn">Execute</button>
-        <button class="btn-ghost" id="downloadBtn" disabled>Download enriched CSV</button>
-      </div>
-    </div>
-
-    <!-- RIGHT -->
-    <div class="card">
-      <h2>Standard sizes</h2>
-      <div class="muted">EU mattress standards</div>
-      <div class="small mono" id="sizesList"></div>
-      <div class="small muted" style="margin-top:10px">
-        Output: proposed_standard_size, proposed_standard_name, distance
-      </div>
-    </div>
+  <div class="form-grid three">
+    <div><label>Item column</label><input id="itemCol"></div>
+    <div><label>Width column</label><input id="wCol"></div>
+    <div><label>Length column</label><input id="lCol"></div>
   </div>
 
-  <div class="card" style="margin-top:18px">
-    <h2>Preview</h2>
-    <div id="previewWrap"></div>
+  <div class="actions">
+    <button class="btn-exec" id="processBtn">Execute</button>
+    <button class="btn-ghost" id="downloadBtn" disabled>Download CSV</button>
   </div>
+</div>
+
+<div class="card">
+  <h2>Standard sizes</h2>
+  <div class="muted">EU mattress standards</div>
+  <ul class="sizes-list" id="sizesList"></ul>
+</div>
+
+</div>
+
+<div class="card" style="margin-top:18px">
+  <h2>Preview</h2>
+  <div id="previewWrap"></div>
+</div>
 
 </div>
 
 <script>
-/* ---------- LOGIC ---------- */
-
 const STANDARD_SIZES=[
   {name:"Single",w:80,l:200},
   {name:"Single",w:90,l:200},
@@ -279,84 +252,65 @@ const STANDARD_SIZES=[
   {name:"Extra Large",w:200,l:200},
 ];
 
+const sizesList=document.getElementById("sizesList");
+STANDARD_SIZES.forEach(s=>{
+  const li=document.createElement("li");
+  li.textContent=`${s.w}x${s.l} (${s.name})`;
+  sizesList.appendChild(li);
+});
+
 const fileInput=document.getElementById("fileInput");
 const uploadBtn=document.getElementById("uploadBtn");
 const changeFileBtn=document.getElementById("changeFileBtn");
 const fileLine=document.getElementById("fileLine");
-const fileNameEl=document.getElementById("fileName");
-const fileMetaEl=document.getElementById("fileMeta");
+const fileName=document.getElementById("fileName");
+const fileMeta=document.getElementById("fileMeta");
 const processBtn=document.getElementById("processBtn");
 const downloadBtn=document.getElementById("downloadBtn");
 const previewWrap=document.getElementById("previewWrap");
 const statusDot=document.getElementById("statusDot");
 const statusText=document.getElementById("statusText");
 
-document.getElementById("sizesList").textContent=
-  STANDARD_SIZES.map(s=>`${s.w}x${s.l} (${s.name})`).join(" • ");
-
 uploadBtn.onclick=()=>fileInput.click();
 changeFileBtn.onclick=()=>fileInput.click();
 
 fileInput.onchange=()=>{
-  if(!fileInput.files.length)return;
   const f=fileInput.files[0];
+  if(!f)return;
   fileLine.style.display="flex";
-  fileNameEl.textContent=f.name;
-  fileMetaEl.textContent=Math.round(f.size/1024)+" KB";
-  statusText.textContent="Ready to execute";
+  fileName.textContent=f.name;
+  fileMeta.textContent=Math.round(f.size/1024)+" KB";
+  statusText.textContent="Ready";
   statusDot.className="dot ok";
 };
-
-function parseCSV(text,delim){
-  const rows=[];let r=[],f="",q=false;
-  for(let i=0;i<text.length;i++){
-    const c=text[i],n=text[i+1];
-    if(c=='"'){if(q&&n=='"'){f+='"';i++;}else q=!q;}
-    else if(!q&&c==delim){r.push(f);f="";}
-    else if(!q&&(c=="\n"||c=="\r")){
-      if(c=="\r"&&n=="\n")i++;
-      r.push(f);rows.push(r);r=[];f="";
-    }else f+=c;
-  }
-  if(f||r.length){r.push(f);rows.push(r);}
-  return rows;
-}
-
-function nearest(w,l){
-  if(w>l)[w,l]=[l,w];
-  let best=null;
-  for(const s of STANDARD_SIZES){
-    const d=Math.abs(w-s.w)+Math.abs(l-s.l);
-    if(!best||d<best.d||(d==best.d&&(s.w*s.l<best.w*best.l))){
-      best={...s,d};
-    }
-  }
-  return best;
-}
 
 processBtn.onclick=async()=>{
   if(!fileInput.files.length)return;
   const text=await fileInput.files[0].text();
-  const rows=parseCSV(text,",");
-  const head=rows[0],out=[...head,"proposed_standard_size","proposed_standard_name","distance"];
+  const rows=text.trim().split("\n").map(r=>r.split(","));
+  const out=[...rows[0],"proposed_standard_size","proposed_standard_name","distance"];
   const body=[];
   for(let i=1;i<rows.length;i++){
     const r=rows[i];
-    const w=Number(r[1]),l=Number(r[2]);
+    const w=+r[1],l=+r[2];
     if(!w||!l){body.push([...r,"","",""]);continue;}
-    const b=nearest(w,l);
-    body.push([...r,`${b.w}x${b.l}`,b.name,b.d]);
+    let best=null;
+    STANDARD_SIZES.forEach(s=>{
+      const d=Math.abs(w-s.w)+Math.abs(l-s.l);
+      if(!best||d<best.d||(d==best.d&&s.w*s.l<best.w*best.l))
+        best={...s,d};
+    });
+    body.push([...r,`${best.w}x${best.l}`,best.name,best.d]);
   }
   render(out,body);
   downloadBtn.disabled=false;
-  statusText.textContent="Executed";
 };
 
 function render(h,rows){
   const t=document.createElement("table");
-  const thead=document.createElement("tr");
-  h.forEach(x=>{const th=document.createElement("th");th.textContent=x;thead.appendChild(th)});
-  t.appendChild(thead);
+  const tr=document.createElement("tr");
+  h.forEach(x=>{const th=document.createElement("th");th.textContent=x;tr.appendChild(th)});
+  t.appendChild(tr);
   rows.slice(0,200).forEach(r=>{
     const tr=document.createElement("tr");
     r.forEach(c=>{const td=document.createElement("td");td.textContent=c||"";tr.appendChild(td)});
