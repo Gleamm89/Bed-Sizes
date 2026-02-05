@@ -4,18 +4,35 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>vidaXL | EU Bed Size Mapper</title>
+
+  <!-- Favicon from embedded logo -->
+  <link rel="icon" type="image/png" href="logo.png" />
+
   <style>
     :root{
-      --vx-orange:#f60;
-      --vx-orange-2:#ff7a1a;
-      --vx-black:#111;
+      /* vidaXL-inspired scheme (purple base + orange/green CTAs) */
+      --vx-purple:#5b2aa6;
+      --vx-purple-2:#7a3cff;
+      --vx-purple-ink:#2a0f55;
+
+      --vx-orange:#ff6a00;
+      --vx-orange-2:#ff8a2b;
+
+      --vx-green:#16a34a;
+      --vx-green-2:#22c55e;
+
       --vx-text:#1f2937;
       --vx-muted:#6b7280;
-      --vx-border:#e5e7eb;
-      --vx-bg:#f6f7fb;
+
+      --vx-border:rgba(255,255,255,.14);
+      --vx-border-2:rgba(31,41,55,.10);
+
+      --vx-bg-1:#16072f;
+      --vx-bg-2:#250a4f;
+
       --vx-card:#ffffff;
-      --vx-shadow: 0 10px 30px rgba(0,0,0,.08);
-      --vx-radius: 16px;
+      --vx-shadow: 0 14px 34px rgba(0,0,0,.20);
+      --vx-radius: 18px;
     }
 
     *{ box-sizing:border-box; }
@@ -23,51 +40,55 @@
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       color: var(--vx-text);
-      background: radial-gradient(1200px 600px at 20% 0%, rgba(255,102,0,.10), transparent 55%),
-                  radial-gradient(900px 500px at 80% 20%, rgba(255,122,26,.08), transparent 60%),
-                  var(--vx-bg);
+      background:
+        radial-gradient(1100px 550px at 18% 0%, rgba(122,60,255,.35), transparent 60%),
+        radial-gradient(900px 520px at 80% 25%, rgba(255,106,0,.18), transparent 60%),
+        linear-gradient(180deg, var(--vx-bg-1), var(--vx-bg-2));
+      min-height: 100vh;
     }
 
-    .wrap{ max-width: 1100px; margin: 28px auto; padding: 0 18px 40px; }
+    .wrap{ max-width: 1120px; margin: 26px auto; padding: 0 18px 44px; }
 
     .topbar{
       display:flex; align-items:center; justify-content:space-between; gap:16px;
-      padding: 14px 18px;
-      border: 1px solid rgba(255,102,0,.18);
-      background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.80));
-      backdrop-filter: blur(6px);
-      border-radius: 18px;
-      box-shadow: 0 8px 20px rgba(0,0,0,.06);
+      padding: 14px 16px;
+      border: 1px solid var(--vx-border);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: 0 14px 34px rgba(0,0,0,.25);
+      color: rgba(255,255,255,.92);
     }
+
     .brand{ display:flex; align-items:center; gap:12px; }
-    .logo{
-      width: 42px; height: 42px; border-radius: 12px;
-      background: linear-gradient(135deg, var(--vx-orange), var(--vx-orange-2));
+    .logoWrap{
+      width: 44px; height: 44px; border-radius: 14px;
+      background: linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,.07));
+      border: 1px solid rgba(255,255,255,.16);
       display:grid; place-items:center;
-      box-shadow: 0 10px 20px rgba(255,102,0,.22);
-      color:white; font-weight: 800;
-      letter-spacing: .5px;
-      user-select:none;
+      overflow:hidden;
     }
-    h1{ font-size: 18px; margin:0; color: var(--vx-black); }
-    .subtitle{ font-size: 13px; color: var(--vx-muted); margin-top:2px; }
+    .logoWrap img{ width: 44px; height: 44px; object-fit: cover; }
+
+    h1{ font-size: 16px; margin:0; color: rgba(255,255,255,.96); letter-spacing:.2px; }
+    .subtitle{ font-size: 12.5px; color: rgba(255,255,255,.75); margin-top:3px; }
 
     .badge{
-      font-size:12px; padding: 6px 10px; border-radius: 999px;
-      border: 1px solid var(--vx-border);
-      background: rgba(255,255,255,.9);
-      color: var(--vx-muted);
+      font-size:12px; padding: 7px 10px; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.18);
+      color: rgba(255,255,255,.85);
       display:inline-flex; align-items:center; gap:8px;
       white-space:nowrap;
     }
-    .dot{ width:8px; height:8px; border-radius: 50%; background: #d1d5db; }
+    .dot{ width:8px; height:8px; border-radius: 50%; background: rgba(255,255,255,.45); }
     .dot.ok{ background: #22c55e; }
     .dot.warn{ background: #f59e0b; }
     .dot.err{ background: #ef4444; }
 
     .grid{
       display:grid;
-      grid-template-columns: 1.2fr .8fr;
+      grid-template-columns: 1.25fr .75fr;
       gap: 18px;
       margin-top: 18px;
     }
@@ -76,47 +97,39 @@
     }
 
     .card{
-      border: 1px solid var(--vx-border);
-      background: var(--vx-card);
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.92);
       border-radius: var(--vx-radius);
       box-shadow: var(--vx-shadow);
       padding: 16px;
     }
     .card h2{
-      margin: 0 0 8px;
-      font-size: 14px;
-      color: var(--vx-black);
+      margin: 0 0 6px;
+      font-size: 13.5px;
+      color: #111827;
     }
     .muted{ color: var(--vx-muted); font-size: 13px; }
 
     label{
       display:block;
       font-size: 12px;
-      font-weight: 650;
-      color: var(--vx-black);
+      font-weight: 700;
+      color: #111827;
       margin: 12px 0 6px;
     }
 
     input[type="text"], select{
       width: 100%;
       padding: 10px 12px;
-      border: 1px solid var(--vx-border);
+      border: 1px solid rgba(17,24,39,.12);
       border-radius: 12px;
       background: #fff;
       outline:none;
       transition: box-shadow .15s ease, border-color .15s ease;
     }
     input[type="text"]:focus, select:focus{
-      border-color: rgba(255,102,0,.55);
-      box-shadow: 0 0 0 4px rgba(255,102,0,.12);
-    }
-
-    input[type="file"]{
-      width:100%;
-      padding: 10px 12px;
-      border: 1px dashed rgba(255,102,0,.35);
-      border-radius: 12px;
-      background: rgba(255,102,0,.03);
+      border-color: rgba(122,60,255,.55);
+      box-shadow: 0 0 0 4px rgba(122,60,255,.14);
     }
 
     .row{ display:flex; gap: 12px; flex-wrap:wrap; }
@@ -128,26 +141,39 @@
     }
 
     button{
-      border: 1px solid var(--vx-border);
+      border: 1px solid rgba(17,24,39,.10);
       background: #fff;
       padding: 10px 12px;
       border-radius: 12px;
       cursor:pointer;
-      font-weight: 650;
-      transition: transform .05s ease, background .15s ease, box-shadow .15s ease, border-color .15s ease;
+      font-weight: 800;
+      transition: transform .05s ease, filter .15s ease, box-shadow .15s ease;
     }
-    button:hover{ background:#fafafa; }
     button:active{ transform: translateY(1px); }
+    button:disabled{ opacity:.55; cursor:not-allowed; box-shadow:none; }
 
-    .primary{
-      background: linear-gradient(135deg, var(--vx-orange), var(--vx-orange-2));
-      border-color: rgba(255,102,0,.45);
-      color: white;
-      box-shadow: 0 12px 24px rgba(255,102,0,.18);
+    /* Green upload button */
+    .btn-upload{
+      color: #fff;
+      border-color: rgba(22,163,74,.35);
+      background: linear-gradient(135deg, var(--vx-green), var(--vx-green-2));
+      box-shadow: 0 12px 24px rgba(34,197,94,.18);
     }
-    .primary:hover{ filter: brightness(0.98); background: linear-gradient(135deg, var(--vx-orange), var(--vx-orange-2)); }
-    button:disabled{
-      opacity:.55; cursor:not-allowed; box-shadow:none;
+    .btn-upload:hover{ filter: brightness(.98); }
+
+    /* Orange execute button */
+    .btn-exec{
+      color: #fff;
+      border-color: rgba(255,106,0,.35);
+      background: linear-gradient(135deg, var(--vx-orange), var(--vx-orange-2));
+      box-shadow: 0 12px 24px rgba(255,106,0,.18);
+    }
+    .btn-exec:hover{ filter: brightness(.98); }
+
+    /* Neutral */
+    .btn-ghost{
+      background: #fff;
+      box-shadow: 0 10px 20px rgba(0,0,0,.06);
     }
 
     .small{ font-size: 12px; }
@@ -159,10 +185,11 @@
       margin-top: 12px;
       overflow:hidden;
       border-radius: 14px;
-      border:1px solid var(--vx-border);
+      border:1px solid rgba(17,24,39,.10);
+      background:#fff;
     }
     th, td{
-      border-bottom: 1px solid var(--vx-border);
+      border-bottom: 1px solid rgba(17,24,39,.08);
       padding: 10px 10px;
       font-size: 13px;
       vertical-align: top;
@@ -170,7 +197,7 @@
     th{
       text-align:left;
       font-size: 12px;
-      color: var(--vx-muted);
+      color: #6b7280;
       background: #fbfbfd;
     }
     tr:last-child td{ border-bottom: none; }
@@ -178,24 +205,39 @@
     .sizesbox{
       padding: 10px 12px;
       border-radius: 12px;
-      background: rgba(255,102,0,.04);
-      border: 1px solid rgba(255,102,0,.18);
+      background: linear-gradient(180deg, rgba(122,60,255,.10), rgba(122,60,255,.06));
+      border: 1px solid rgba(122,60,255,.18);
       font-size: 12px;
       line-height: 1.35;
+      color:#111827;
     }
 
-    .footer-note{
-      margin-top: 10px;
+    .hint{
+      color: rgba(17,24,39,.72);
       font-size: 12px;
-      color: var(--vx-muted);
     }
-    .kv{
-      display:flex; justify-content:space-between; gap:10px;
-      padding: 8px 0; border-bottom: 1px dashed var(--vx-border);
-      font-size: 13px;
+
+    /* Hide native file input; use custom button */
+    #fileInput{ display:none; }
+
+    .fileline{
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px dashed rgba(122,60,255,.25);
+      background: rgba(122,60,255,.06);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      flex-wrap:wrap;
     }
-    .kv:last-child{ border-bottom:none; }
-    .kv b{ color: var(--vx-black); }
+    .fileline .name{
+      color:#111827;
+      font-weight:700;
+      font-size: 12.5px;
+    }
+    .fileline .meta{
+      color: rgba(17,24,39,.65);
+      font-size: 12px;
+    }
   </style>
 </head>
 
@@ -203,13 +245,15 @@
   <div class="wrap">
     <div class="topbar">
       <div class="brand">
-        <div class="logo">VX</div>
+        <div class="logoWrap">
+          <img alt="Logo" src="logo.png" />
+        </div>
         <div>
           <h1>EU Bed Size Mapper</h1>
-          <div class="subtitle">Upload CSV → map dimensions to nearest standard EU bed sizes (ties → smallest).</div>
+          <div class="subtitle">Upload CSV → map to nearest standard EU bed size (ties → smallest).</div>
         </div>
       </div>
-      <div class="badge" id="statusBadge">
+      <div class="badge">
         <span class="dot" id="statusDot"></span>
         <span id="statusText">Waiting for file…</span>
       </div>
@@ -218,13 +262,24 @@
     <div class="grid">
       <div class="card">
         <h2>Import & mapping</h2>
-        <div class="muted">Works locally in your browser — your CSV isn’t uploaded anywhere.</div>
+        <div class="muted">Runs locally in your browser — the CSV is not uploaded anywhere.</div>
 
-        <label>CSV file</label>
+        <!-- Hidden file input + custom green button -->
         <input id="fileInput" type="file" accept=".csv,text/csv" />
-        <div id="fileInfo" class="small muted" style="margin-top:6px;"></div>
+        <div class="actions" style="margin-top:12px;">
+          <button class="btn-upload" id="uploadBtn">Upload CSV</button>
+          <span class="hint">Choose a CSV with item number + width/length columns (cm).</span>
+        </div>
 
-        <div class="row" style="margin-top: 8px;">
+        <div class="fileline" id="fileLine" style="display:none;">
+          <div>
+            <div class="name" id="fileName">—</div>
+            <div class="meta" id="fileMeta">—</div>
+          </div>
+          <button class="btn-ghost" id="changeFileBtn">Change file</button>
+        </div>
+
+        <div class="row" style="margin-top: 12px;">
           <div class="col">
             <label>Delimiter</label>
             <select id="delimiter">
@@ -240,7 +295,7 @@
               <option value="L1">Absolute distance: |Δw| + |Δl| (recommended)</option>
               <option value="L2">Euclidean: sqrt(Δw² + Δl²)</option>
             </select>
-            <div class="footer-note">Tie-break: smallest area → smallest width → smallest length.</div>
+            <div class="small muted" style="margin-top:6px;">Tie-break: smallest area → smallest width → smallest length.</div>
           </div>
         </div>
 
@@ -260,9 +315,8 @@
         </div>
 
         <div class="actions">
-          <button class="primary" id="processBtn">Process CSV</button>
-          <button id="downloadBtn" disabled>Download enriched CSV</button>
-          <span class="muted small" id="hint">Tip: name the main HTML file <b>index.html</b> for GitHub Pages.</span>
+          <button class="btn-exec" id="processBtn">Execute</button>
+          <button class="btn-ghost" id="downloadBtn" disabled>Download enriched CSV</button>
         </div>
       </div>
 
@@ -270,11 +324,9 @@
         <h2>Standard sizes</h2>
         <div class="muted">Edit these in the code if you need extra variants (e.g. 190-length beds).</div>
         <div class="sizesbox mono" id="sizesList"></div>
+
         <div style="margin-top: 12px;">
-          <div class="kv"><span>Output columns added</span><b>3</b></div>
-          <div class="kv"><span>Added: size</span><b>proposed_standard_size</b></div>
-          <div class="kv"><span>Added: label</span><b>proposed_standard_name</b></div>
-          <div class="kv"><span>Added: distance</span><b>distance</b></div>
+          <div class="small muted"><b>Output columns added:</b> proposed_standard_size, proposed_standard_name, distance</div>
         </div>
       </div>
     </div>
@@ -301,10 +353,15 @@
   // UI refs
   const sizesListEl = document.getElementById("sizesList");
   const fileInput = document.getElementById("fileInput");
+  const uploadBtn = document.getElementById("uploadBtn");
+  const changeFileBtn = document.getElementById("changeFileBtn");
+  const fileLine = document.getElementById("fileLine");
+  const fileNameEl = document.getElementById("fileName");
+  const fileMetaEl = document.getElementById("fileMeta");
+
   const processBtn = document.getElementById("processBtn");
   const downloadBtn = document.getElementById("downloadBtn");
   const previewWrap = document.getElementById("previewWrap");
-  const fileInfo = document.getElementById("fileInfo");
 
   const itemColEl = document.getElementById("itemCol");
   const wColEl = document.getElementById("wCol");
@@ -327,6 +384,28 @@
     if (kind === "warn") statusDot.classList.add("warn");
     if (kind === "err") statusDot.classList.add("err");
   }
+
+  uploadBtn.addEventListener("click", () => fileInput.click());
+  changeFileBtn.addEventListener("click", () => fileInput.click());
+
+  fileInput.addEventListener("change", () => {
+    enrichedRows = [];
+    enrichedHeader = [];
+    downloadBtn.disabled = true;
+    previewWrap.innerHTML = "";
+
+    if (!fileInput.files?.length) {
+      fileLine.style.display = "none";
+      setStatus("Waiting for file…", "muted");
+      return;
+    }
+
+    const f = fileInput.files[0];
+    fileLine.style.display = "flex";
+    fileNameEl.textContent = f.name;
+    fileMetaEl.textContent = `${Math.round(f.size/1024)} KB`;
+    setStatus("Ready to execute", "ok");
+  });
 
   function detectDelimiter(text) {
     const lines = text.split(/\r?\n/).filter(l => l.trim().length);
@@ -490,25 +569,8 @@
     previewWrap.appendChild(table);
   }
 
-  fileInput.addEventListener("change", () => {
-    enrichedRows = [];
-    enrichedHeader = [];
-    downloadBtn.disabled = true;
-    previewWrap.innerHTML = "";
-
-    if (!fileInput.files?.length) {
-      fileInfo.textContent = "";
-      setStatus("Waiting for file…", "muted");
-      return;
-    }
-
-    const f = fileInput.files[0];
-    fileInfo.textContent = `${f.name} (${Math.round(f.size/1024)} KB)`;
-    setStatus("Ready to process", "ok");
-  });
-
   processBtn.addEventListener("click", async () => {
-    if (!fileInput.files?.length) { setStatus("Please choose a CSV file first", "warn"); return; }
+    if (!fileInput.files?.length) { setStatus("Upload a CSV first", "warn"); return; }
 
     const f = fileInput.files[0];
     const text = await f.text();
@@ -540,7 +602,7 @@
 
     const rule = distanceRuleEl.value;
 
-    // Output columns (REMOVED the last 2 columns you mentioned)
+    // Output columns (only 3 added)
     const outHeader = [...header, "proposed_standard_size", "proposed_standard_name", "distance"];
     const outRows = [];
 
@@ -590,8 +652,8 @@
     renderPreview(enrichedHeader, enrichedRows);
 
     downloadBtn.disabled = false;
-    if (badCount) setStatus(`Done: ${okCount} mapped, ${badCount} missing dims`, "warn");
-    else setStatus(`Done: ${okCount} mapped`, "ok");
+    if (badCount) setStatus(`Executed: ${okCount} mapped, ${badCount} missing dims`, "warn");
+    else setStatus(`Executed: ${okCount} mapped`, "ok");
   });
 
   downloadBtn.addEventListener("click", () => {
@@ -612,5 +674,11 @@
 
   setStatus("Waiting for file…", "muted");
 </script>
+
+<script>
+  // Inject the logo base64 (keeps file single and self-contained)
+  // NOTE: This placeholder is replaced below in the HTML output you paste.
+</script>
+
 </body>
 </html>
