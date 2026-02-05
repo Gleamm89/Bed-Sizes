@@ -290,7 +290,15 @@
             </select>
           </div>
 
-
+          <div>
+            <label>Distance rule</label>
+            <select id="distanceRule">
+              <option value="L1">Absolute distance: abs(dw) + abs(dl) (recommended)</option>
+              <option value="L2">Euclidean distance: sqrt(dw*dw + dl*dl)</option>
+            </select>
+            <div class="helper">Tie-break: smallest area → smallest width → smallest length.</div>
+          </div>
+        </div>
 
         <!-- Row 2: Item / Width / Length (aligned via grid) -->
         <div class="form-grid three">
@@ -671,4 +679,5 @@
 </script>
 </body>
 </html>
+
 
