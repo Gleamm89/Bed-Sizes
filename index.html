@@ -291,7 +291,9 @@ processBtn.onclick=async()=>{
 
   for(let i=1;i<rows.length;i++){
     const r=rows[i];
-    const w=+r[1],l=+r[2];
+      const w = Number(String(r[1]).replace(",", "."));
+      const l = Number(String(r[2]).replace(",", "."));
+
     if(!w||!l){body.push([...r,"","",""]);continue;}
     let best=null;
     STANDARD_SIZES.forEach(s=>{
@@ -322,3 +324,4 @@ function render(h,rows){
 </script>
 </body>
 </html>
+
